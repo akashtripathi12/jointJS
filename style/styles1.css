@@ -1,0 +1,213 @@
+.blue-btn:hover,
+		.blue-btn:active,
+		.blue-btn:focus,
+		.blue-btn {
+			background: transparent;
+			border: solid 1px #377dff;
+			border-radius: 3px;
+			color: #377dff;
+			font-size: 16px;
+			margin-bottom: 20px;
+			outline: none !important;
+			padding: 0px 10px;
+		}
+
+		.fileUpload {
+			position: relative;
+			overflow: hidden;
+			height: 30px;
+			margin-top: 0;
+		}
+
+		.fileUpload input.uploadfile {
+			position: absolute;
+			top: 0;
+			right: 0;
+			margin: 0;
+			padding: 0;
+			font-size: 20px;
+			cursor: pointer;
+			opacity: 0;
+			filter: alpha(opacity=0);
+			width: 100%;
+			height: 30px;
+		}
+
+		/*Chrome fix*/
+		input::-webkit-file-upload-button {
+			cursor: pointer !important;
+			height: 30px;
+			/* width: 100%; */
+		}
+
+		.cardauxiliar {
+			padding: 2rem .5rem;
+		}
+
+		.only-in-mobile {
+			display: none !important;
+		}
+
+		@media (max-width: 576px) {
+			.cardauxiliar {
+				padding: 0px;
+				margin-left: 30px;
+			}
+
+			.app-admin-wrap.sidebar-full .main-content-wrap {
+				padding: 15px;
+			}
+
+			.fc .fc-toolbar {
+				display: block;
+
+			}
+		}
+
+		@media (max-width: 1750px) and (min-width:1200px) {
+			.cardauxiliar .lead {
+				font-size: 13px;
+			}
+		}
+
+		@media (max-width: 1151px) {
+			.only-in-mobile {
+				display: block !important;
+			}
+		}
+
+		.bordereditable {
+			border: solid 3px #377dff;
+			border-radius: 10px;
+			padding-right: 20px;
+			padding-left: 20px;
+			display: inline-block;
+		}
+
+		.ui-datepicker {
+			background: #fff;
+		}
+
+		.ui-datepicker-header {
+			background: #377dff;
+		}
+
+		.ui-widget-content {
+			border: none;
+		}
+
+		.fc-toolbar-title {
+			color: #377dff;
+			text-transform: uppercase;
+		}
+
+		.fc .fc-button-primary {
+			background: #377dff;
+		}
+
+		.fc .fc-button-primary:not(:disabled).fc-button-active {
+			color: #1d0101;
+			background-color: #eeeeee;
+		}
+
+		.selectoreditable {
+			width: 80%;
+			display: inline;
+			height: 26px;
+			padding: 0px;
+			padding-left: 14px;
+		}
+
+		.table th,
+		.table td {
+			padding: 0.70rem;
+			vertical-align: top;
+			border-top: 1px solid #dee2e6;
+		}
+
+		.responsivetablelosconceptos {
+			overflow-y: scroll;
+			bottom: 15px;
+			top: -10px;
+			height: 650px;
+		}
+
+		.responsivetablelosconceptos thead tr th {
+			position: sticky;
+			top: 0;
+			background: #ffffff;
+			top: -1px;
+		}
+
+		.table th,
+		.table td {
+			padding: 2.5px;
+			vertical-align: middle;
+			min-width: 120px;
+		}
+
+		#tablaconceptosnomina {
+			table-layout: fixed !important;
+			word-wrap: break-word;
+
+		}
+
+		select.form-control {
+			background: url(https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) #f8f9fa no-repeat 98.5% !important;
+			background: url(https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) #f8f9fa no-repeat calc(100% - 10px) !important;
+		}
+
+		.form-control[readonly] {
+			background-color: #f4faff;
+			opacity: 1;
+		}
+
+		.tooltip-inner {
+			max-width: 450px;
+			font-size: 13px;
+			text-align: left;
+			background-color: #032673;
+		}
+
+		.tooltip-inner a {
+			color: #ffffff;
+			text-decoration: underline;
+			font-weight: 900;
+		}
+
+		.tooltip {
+			padding-left: 13px;
+		}
+
+		tr.group,
+		tr.group:hover {
+			background-color: #ddd !important;
+
+		}
+
+		tr.group td {
+			text-align: left;
+			padding-left: 10px;
+			font-size: 13px;
+			font-weight: bold;
+			color: #ffffff;
+			background: #377dff;
+		}
+
+		#tablaconceptosnomina th {
+			text-align: center;
+			z-index: 1;
+		}
+
+		.table-cell-bases {
+			font-weight: 800;
+			text-align: center;
+		}
+
+		#tablaconceptosnomina_filter {
+			margin-bottom: 10px;
+		}
+
+		.responsivetablelosconceptos thead tr th.select-checkbox {
+			width: 65px;
+		}

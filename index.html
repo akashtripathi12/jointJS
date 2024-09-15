@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en" dir="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Joint JS</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="./build/package/rappid.css" />
+
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <link
+      href="https://www.fiscoclic.mx/validadorcfdi/dist-assets/css/themes/lite-blue-fisco.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://www.fiscoclic.mx/validadorcfdi/dist-assets/css/themes/menunomina.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://www.fiscoclic.mx/validadorcfdi/dist-assets/css/plugins/metisMenu.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      .blue-btn:hover,
+      .blue-btn:active,
+      .blue-btn:focus,
+      .blue-btn {
+        background: transparent;
+        border: solid 1px #377dff;
+        border-radius: 3px;
+        color: #377dff;
+        font-size: 16px;
+        margin-bottom: 20px;
+        outline: none !important;
+        padding: 0px 10px;
+      }
+
+      .fileUpload {
+        position: relative;
+        overflow: hidden;
+        height: 30px;
+        margin-top: 0;
+      }
+
+      .fileUpload input.uploadfile {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        cursor: pointer;
+        opacity: 0;
+        filter: alpha(opacity=0);
+        width: 100%;
+        height: 30px;
+      }
+
+      /*Chrome fix*/
+      input::-webkit-file-upload-button {
+        cursor: pointer !important;
+        height: 30px;
+      }
+
+      .cardauxiliar {
+        padding: 2rem 0.5rem;
+      }
+
+      .only-in-mobile {
+        display: none !important;
+      }
+
+      @media (max-width: 576px) {
+        .cardauxiliar {
+          padding: 0px;
+          margin-left: 30px;
+        }
+
+        .app-admin-wrap.sidebar-full .main-content-wrap {
+          padding: 15px;
+        }
+
+        .fc .fc-toolbar {
+          display: block;
+        }
+      }
+
+      @media (max-width: 1750px) and (min-width: 1200px) {
+        .cardauxiliar .lead {
+          font-size: 13px;
+        }
+      }
+
+      @media (max-width: 1151px) {
+        .only-in-mobile {
+          display: block !important;
+        }
+      }
+
+      .bordereditable {
+        border: solid 3px #377dff;
+        border-radius: 10px;
+        padding-right: 20px;
+        padding-left: 20px;
+        display: inline-block;
+      }
+
+      .ui-datepicker {
+        background: #fff;
+      }
+
+      .ui-datepicker-header {
+        background: #377dff;
+      }
+
+      .ui-widget-content {
+        border: none;
+      }
+
+      .fc-toolbar-title {
+        color: #377dff;
+        text-transform: uppercase;
+      }
+
+      .fc .fc-button-primary {
+        background: #377dff;
+      }
+
+      .fc .fc-button-primary:not(:disabled).fc-button-active {
+        color: #1d0101;
+        background-color: #eeeeee;
+      }
+
+      .selectoreditable {
+        width: 80%;
+        display: inline;
+        height: 26px;
+        padding: 0px;
+        padding-left: 14px;
+      }
+
+      .table th,
+      .table td {
+        padding: 0.7rem;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+      }
+
+      .responsivetablelosconceptos {
+        overflow-y: scroll;
+        bottom: 15px;
+        top: -10px;
+        height: 650px;
+      }
+
+      .responsivetablelosconceptos thead tr th {
+        position: sticky;
+        top: 0;
+        background: #ffffff;
+        top: -1px;
+      }
+
+      .table th,
+      .table td {
+        padding: 2.5px;
+        vertical-align: middle;
+        min-width: 120px;
+      }
+
+      #tablaconceptosnomina {
+        table-layout: fixed !important;
+        word-wrap: break-word;
+      }
+
+      .form-control[readonly] {
+        background-color: #f4faff;
+        opacity: 1;
+      }
+
+      .tooltip-inner {
+        max-width: 450px;
+        font-size: 13px;
+        text-align: left;
+        background-color: #032673;
+      }
+
+      .tooltip-inner a {
+        color: #ffffff;
+        text-decoration: underline;
+        font-weight: 900;
+      }
+
+      .tooltip {
+        padding-left: 13px;
+      }
+
+      tr.group,
+      tr.group:hover {
+        background-color: #ddd !important;
+      }
+
+      tr.group td {
+        text-align: left;
+        padding-left: 10px;
+        font-size: 13px;
+        font-weight: bold;
+        color: #ffffff;
+        background: #377dff;
+      }
+
+      #tablaconceptosnomina th {
+        text-align: center;
+        z-index: 1;
+      }
+
+      .table-cell-bases {
+        font-weight: 800;
+        text-align: center;
+      }
+
+      #tablaconceptosnomina_filter {
+        margin-bottom: 10px;
+      }
+
+      .responsivetablelosconceptos thead tr th.select-checkbox {
+        width: 65px;
+      }
+    </style>
+  </head>
+
+  <body class="text-left">
+    <div class="main-content-wrap mobile-menu-content bg-off-white m-0">
+      <!-- ============ Body content start ============= -->
+      <div class="main-content">
+        <div class="main">
+          <!--------------------------left pannel---------------------------------- -->
+          <div id="toolscontainer">
+            <div class="toolscontainer-2" id="draggableElementContainerPaper">
+              <div class="toolscontainer-2-1">
+                <i class="fa fa-sort-desc paper-image-4" aria-hidden="true"></i>
+                <h5>Utilities</h5>
+              </div>
+              <div
+                class="toolscontainer-2a drag"
+                draggable="true"
+                data-type="LiquidTank"
+              >
+                <img
+                  class="paper-image-3 tank"
+                  src="./Images/Elements/Tank.png"
+                />
+                <p class="toolstext-1" style="margin-left: 40px">Big Tank</p>
+              </div>
+              <div
+                class="toolscontainer-2b drag"
+                draggable="true"
+                data-type="ConicTank"
+              >
+                <img
+                  class="paper-image-3 conicTank"
+                  src="./Images/Elements/conicTank.png"
+                />
+                <p class="toolstext-2" style="margin-left: 30px">Conic Tank</p>
+              </div>
+              <div
+                class="toolscontainer-2c drag"
+                draggable="true"
+                data-type="Pump"
+              >
+                <img
+                  class="paper-image-3 pump"
+                  src="./Images/Elements/pump.png"
+                />
+                <p class="toolstext-3" style="margin-left: 20px">Pump</p>
+              </div>
+              <div
+                class="toolscontainer-2d drag"
+                draggable="true"
+                data-type="ControlValve"
+              >
+                <img
+                  class="paper-image-3 ControlValve"
+                  src="./Images/Elements/ControlValve.png"
+                />
+                <p class="toolstext-4" style="margin-left: 10px">
+                  ControlValve
+                </p>
+              </div>
+              <div
+                class="toolscontainer-2d drag"
+                draggable="true"
+                data-type="HandValve"
+              >
+                <img
+                  class="paper-image-3 HandValve"
+                  src="./Images/Elements/HandValve.png"
+                />
+                <p class="toolstext-3" style="margin-left: 15px">HandValve</p>
+              </div>
+              <div
+                class="toolscontainer-2e drag"
+                draggable="true"
+                data-type="Panel"
+              >
+                <img
+                  class="paper-image-3 Panel"
+                  src="./Images/Elements/Panel.png"
+                />
+                <p class="toolstext-3" style="margin-left: 25px">Panel</p>
+              </div>
+              <div
+                class="toolscontainer-2f drag"
+                draggable="true"
+                data-type="Join"
+              >
+                <img
+                  class="paper-image-3 Join"
+                  src="./Images/Elements/Join.png"
+                />
+                <p class="toolstext-3" style="margin-left: 30px">Join</p>
+              </div>
+              <div
+                class="toolscontainer-2g drag"
+                draggable="true"
+                data-type="Zone"
+              >
+                <img
+                  class="paper-image-3 Zone"
+                  src="./Images/Elements/Zone.png"
+                />
+                <p class="toolstext-3">Zone</p>
+              </div>
+            </div>
+          </div>
+          <!--------------------------Center pannel---------------------------------------->
+          <div class="center">
+            <!-------------------------paper------------------------------>
+            <div id="json3">
+              <div>
+                <img
+                  src="Images/refresh.png"
+                  onclick="cleargraph()"
+                  class="json-img-5"
+                />
+                <label for="file" class="json4">Upload</label>
+                <input
+                  id="file"
+                  style="visibility: hidden; max-width: 20px"
+                  type="file"
+                  accept=".json"
+                  onchange="uploadjson()"
+                />
+              </div>
+              <div>
+                <img class="json-img-2" src="Images/pencil.png" />
+                <input id="json2" placeholder="File Name" />
+                <img
+                  class="json-img-3"
+                  src="Images/down.png"
+                  onclick="handlejson()"
+                />
+                <img
+                  class="json-img-4"
+                  src="Images/save.png"
+                  onclick="savejson()"
+                />
+              </div>
+              <div id="notselect">
+                <i
+                  class="fa fa-undo json-img-m"
+                  aria-hidden="true"
+                  onclick="GraphUndo()"
+                ></i>
+                <i
+                  class="fa fa-repeat json-img-n"
+                  aria-hidden="true"
+                  onclick="GraphRedo()"
+                ></i>
+              </div>
+            </div>
+            <div id="container">
+              <div id="paper"></div>
+            </div>
+          </div>
+          <!---------------------------------- right pannel ------------------------------->
+          <div id="paper2" style="padding-top: 9px">
+            <div class="del-head" style="background-color: white">
+              <h3 style="margin-bottom: 0">
+                <strong style="color: black; margin-bottom: 0"
+                  >Configuration Overview</strong
+                >
+              </h3>
+              <p style="margin-top: 0">Your flow is OK.</p>
+            </div>
+            <hr style="margin: 0; color: whitesmoke" />
+            <div class="panel3" style="background-color: white">
+              <ul
+                id="paper2li"
+                class="del-item"
+                style="background-color: white"
+              ></ul>
+            </div>
+          </div>
+          <div style="background-color: whitesmoke">
+            <div id="minimap-container" style="overflow: hidden">
+              <div id="minimap-paper"></div>
+              <div id="minimap-navigator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--  end of col -->
+
+    <!-- Footer Start -->
+
+    <div
+      class="modal fade"
+      id="DimensionModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="DimensionModal-Title"></h4>
+
+            <button
+              type="button"
+              class="btn-close"
+              data-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <!-- start body -->
+            <div class="row gx-2 p-2">
+              <div class="col-3">
+                <input
+                  id="Dimensioninput"
+                  type="text"
+                  value=""
+                  style="width: 245px"
+                />
+              </div>
+            </div>
+          </div>
+          <!-- End body -->
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="cancelDimensionModal()"
+              data-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              id="dimensionOkay"
+              onclick="SaveDimensionModal()"
+              class="btn btn-success"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Search UI End ============= -->
+    <!--------------------------- dependencies --------------------->
+
+    <script src="./node_modules/jquery/dist/jquery.js"></script>
+    <script src="./node_modules/lodash/lodash.js"></script>
+    <script src="./node_modules/backbone/backbone.js"></script>
+    <script src="./node_modules/graphlib/dist/graphlib.core.js"></script>
+    <script src="./node_modules/dagre/dist/dagre.core.js"></script>
+    <script src="./build/package/rappid.js"></script>
+
+    <script src="https://www.fiscoclic.mx/validadorcfdi/dist-assets/js/plugins/bootstrap.bundle.min.js"></script>
+    <script src="https://www.fiscoclic.mx/validadorcfdi/dist-assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="https://www.fiscoclic.mx/validadorcfdi/dist-assets/js/scripts/script_2.min.js"></script>
+    <script src="https://www.fiscoclic.mx/validadorcfdi/dist-assets/js/plugins/metisMenu.min.js"></script>
+    <script src="https://www.fiscoclic.mx/validadorcfdi/dist-assets/js/scripts/layout-sidebar-vertical.min.js"></script>
+
+    <!-- <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script> -->
+
+    <script>
+      function toggelSidebar() {
+        var $navItem = $(".sidebar-panel");
+
+        if ($navItem.hasClass("sidebar-switch-open")) {
+          $navItem.removeClass("sidebar-switch-open");
+        }
+      }
+      ("use strict");
+    </script>
+
+    <script type="text/javascript">
+      $(document).ready(async () => {
+        let json = localStorage.getItem("GraphJson");
+        if (json == null) {
+          localStorage.setItem("GraphJson", "cells:[]");
+          json = localStorage.getItem("GraphJson");
+        }
+        createGraph(json);
+        graphsteps.push(json);
+        flag = 0;
+      });
+    </script>
+    <!-------------------------Papers-------------------------------------------------------------------->
+    <script src="./script/paper.js"></script>
+
+    <!-------------------------Functions----------------------------------------------------------------->
+    <script src="./script/functions.js"></script>
+
+    <!-------------------------Interactivity------------------------------------------------------------->
+    <script src="./script/interactivity.js"></script>
+
+    <!-------------------------Models-------------------------------------------------------------------->
+    <script src="./script/models.js"></script>
+
+    <!-------------------------Zoom in out---------------------------------------------------------------->
+    <script src="./script/zoom.js"></script>
+
+    <!--------------------------1st panel Drag and Drop--------------------------------------------------->
+    <script src="./script/DragDrop.js"></script>
+
+    <!--------------------------Adding Expand Property-------------------------------------------------->
+    <script src="./script/expand.js"></script>
+
+    <!----------------------------Button---------------------------------------------------------------->
+    <script src="./script/button.js"></script>
+
+    <!--------------------- Minimap Script-------------------------------------------------------------------->
+    <script src="./script/minimap.js"></script>
+  </body>
+</html>
