@@ -214,47 +214,6 @@ const ControlValveView = joint.dia.ElementView.extend({
     );
   },
 });
-const PanelView = joint.dia.ElementView.extend({
-  presentationAttributes: joint.dia.ElementView.addPresentationAttributes({
-    level: [LEVEL_FLAG],
-    color: [LEVEL_FLAG],
-  }),
-
-  initFlag: [joint.dia.ElementView.Flags.RENDER, LEVEL_FLAG],
-
-  confirmUpdate(...args) {
-    let flags = joint.dia.ElementView.prototype.confirmUpdate.call(
-      this,
-      ...args
-    );
-    if (this.hasFlag(flags, LEVEL_FLAG)) {
-      this.updateLevel();
-      flags = this.removeFlag(flags, LEVEL_FLAG);
-    }
-    return flags;
-  },
-
-  updateLevel() {
-    const { model } = this;
-    const level = Math.max(0, Math.min(100, model.get("level") || 0));
-    const color = model.get("color") || "red";
-    const [liquidEl] = this.findBySelector("liquid");
-    const [windowEl] = this.findBySelector("frame");
-    const windowHeight = Number(windowEl.getAttribute("height"));
-    const height = Math.round((windowHeight * level) / 100);
-    liquidEl.animate(
-      {
-        height: [`${height}px`],
-        fill: [color],
-      },
-      {
-        fill: "forwards",
-        duration: 1000,
-      }
-    );
-  },
-});
-
 // ---Controls----
 const PumpControl = joint.dia.HighlighterView.extend({
   UPDATE_ATTRIBUTES: ["power"],
@@ -319,8 +278,8 @@ const SliderValveControl = joint.dia.HighlighterView.extend({
   children: joint.util.svg/* xml */ `
         <foreignObject width="100" height="60">
             <div class="jj-slider" xmlns="http://www.w3.org/1999/xhtml">
-                <div @selector="label" class="jj-slider-label"></div>
-                <input @selector="slider" class="jj-slider-input" type="range" min="0" max="100" step="25" style="width:100%; margin-t"/>
+                <div @selector="label" class="jj-slider-label" style=""></div>
+                <input @selector="slider" class="jj-slider-input" type="range" min="0" max="100" step="25" style="width:100%;"/>
                 <output @selector="value" class="jj-slider-output"></output>
             </div>
         </foreignObject>
@@ -339,9 +298,8 @@ const SliderValveControl = joint.dia.HighlighterView.extend({
     }
     this.el.setAttribute(
       "transform",
-      `translate(${size.width / 2 - 50}, ${size.height + 25})`
+      `translate(${size.width / 2 - 50}, ${size.height + 10})`
     );
-    //this.childNodes.label.textContent = name;
     this.childNodes.value.textContent = this.getSliderTextValue(
       model.get("open")
     );
@@ -367,7 +325,6 @@ var namespace = {
   PipeView: PipeView,
   PumpView: PumpView,
   ControlValveView: ControlValveView,
-  PanelView: PanelView,
 };
 var graph = new joint.dia.Graph(
   {},
@@ -516,20 +473,34 @@ $("#container").mousemove(async function (event) {
 var removeButton = new joint.elementTools.Remove({
   focusOpacity: 0.5,
   action: function (evt, elementView, toolView) {
-    elementView.model.remove({ ui: true, tool: toolView.cid });
-    document.getElementById(elementView.model.id).remove();
+    // Get the element that is being removed
+    const removedElement = elementView.model;
+
+    // Save the remove action in the undo stack before removing the element
+    // saveAction("remove", removedElement);
+
+    // Remove the element from the graph
+    removedElement.remove({ ui: true, tool: toolView.cid });
+
+    // Remove the associated DOM element, if needed
+    document.getElementById(removedElement.id).remove();
+
+    // Reset visibility for the list items (you can customize this as per your UI needs)
     $("#paper2li")
       .children("LI")
       .each(function () {
         $(this).show();
         this.querySelector(".UL").style.display = "none";
       });
-    graphsteps.push(JSON.stringify(graph.toJSON()));
-    console.log(graphsteps.length);
-    graph_undo_redo = [];
-    console.log("Remove");
+
+    // Clear the redo stack after the action
+    redoStack = [];
+
+    console.log("Remove action saved in undo stack.");
   },
 });
+
+// Add the remove button to the tools view
 var toolsView = new joint.dia.ToolsView({
   tools: [removeButton],
 });

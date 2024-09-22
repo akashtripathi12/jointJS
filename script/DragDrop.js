@@ -52,31 +52,41 @@ function addElementToGraph(type, position) {
 
     case "LiquidTank":
       element = new LiquidTank();
-      console.log(element);
       element.position(position.x, position.y);
       break;
 
     case "HandValve":
       element = new HandValve();
-      console.log(element);
       element.position(position.x, position.y);
       break;
 
     case "Zone":
       element = new Zone();
-      console.log(element);
       element.position(position.x, position.y);
       break;
 
     case "Panel":
       element = new Panel();
-      console.log(element);
       element.position(position.x, position.y);
       break;
 
     case "Join":
       element = new Join();
-      console.log(element);
+      element.position(position.x, position.y);
+      break;
+
+    case "BoosterPumpHouse":
+      element = new BoosterPumpHouse();
+      element.position(position.x, position.y);
+      break;
+
+    case "SquareTank":
+      element = new squareTank();
+      element.position(position.x, position.y);
+      break;
+
+    case "FlowMeter":
+      element = new FlowMeter();
       element.position(position.x, position.y);
       break;
 
@@ -85,10 +95,59 @@ function addElementToGraph(type, position) {
       return;
   }
 
+  undoStack.push(element);
+
   // Add the element to the graph
-  append3rd(element.attributes);
+  append3rd(element);
   graph.addCell(element);
 }
+
+// Listen for an element being added to the graph
+graph.on("add", (cell) => {
+  if (cell instanceof LiquidTank) {
+    const panel = new Panel();
+    panel.position(cell.position().x + 10, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (cell instanceof BoosterPumpHouse) {
+    const panel = new Panel();
+    panel.position(cell.position().x + 5, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (cell instanceof squareTank) {
+    const panel = new Panel();
+    panel.position(cell.position().x + 10, cell.position().y + 20);
+    panel.addTo(graph);
+    cell.embed(panel);
+  }
+});
+
+// Handle dragging and moving the tank to keep the panel aligned
+graph.on("change:position", (element) => {
+  if (element instanceof LiquidTank) {
+    const embeddedElements = element.getEmbeddedCells();
+    embeddedElements.forEach((embedded) => {
+      if (embedded instanceof Panel) {
+        embedded.position(element.position().x + 10, element.position().y + 60); // Adjust as needed
+      }
+    });
+  } else if (element instanceof BoosterPumpHouse) {
+    const embeddedElements = element.getEmbeddedCells();
+    embeddedElements.forEach((embedded) => {
+      if (embedded instanceof Panel) {
+        embedded.position(element.position().x + 5, element.position().y + 60); // Adjust as needed
+      }
+    });
+  } else if (element instanceof squareTank) {
+    const embeddedElements = element.getEmbeddedCells();
+    embeddedElements.forEach((embedded) => {
+      if (embedded instanceof Panel) {
+        embedded.position(element.position().x + 10, element.position().y + 20); // Adjust as needed
+      }
+    });
+  }
+});
+
 // necessary for the drop event to trigger
 paper.el.addEventListener(
   "dragover",
@@ -99,3 +158,38 @@ paper.el.addEventListener(
   false
 );
 $("#container").css("overflow", "hidden");
+
+//json save and upload
+let graphsteps = [],
+  graph_undo_redo = [];
+
+//redo and undo
+let undoStack = [];
+let redoStack = [];
+
+const undo = document.getElementById("undo-button");
+const redo = document.getElementById("redo-button");
+
+undo.addEventListener("click", () => {
+  let element = undoStack.pop();
+  if (element) {
+    redoStack.push(element);
+    element.remove();
+  }
+});
+
+redo.addEventListener("click", () => {
+  let element = redoStack.pop();
+  if (element) {
+    undoStack.push(element);
+    graph.addCell(element);
+  }
+});
+
+graph.on("change:source change:target", function (link) {
+  if (link.get("source").id && link.get("target").id) {
+    //console.log("komal");
+    graphsteps.push(JSON.stringify(graph.toJSON()));
+    graph_undo_redo = [];
+  }
+});

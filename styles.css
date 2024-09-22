@@ -54,12 +54,7 @@ body {
 .toolscontainer-2d,
 .toolscontainer-2h,
 .toolscontainer-2i,
-.toolscontainer-2j,
-.toolscontainer-2k,
-.toolscontainer-2l,
-.toolscontainer-2m,
-.toolscontainer-2n,
-.toolscontainer-2o {
+.toolscontainer-2j {
   display: flex;
   flex-direction: row;
   padding-top: 10px;
@@ -76,8 +71,10 @@ body {
   border: 1px solid white;
   margin-right: 4px;
 }
-.tank {
-  height: 4rem;
+.liquidTank,
+.BoosterPumpHouse,
+.squareTank {
+  height: 3rem;
   width: 3rem;
   margin-left: 10px;
 }
@@ -85,15 +82,14 @@ body {
   margin-left: 2px;
 }
 .pump {
-  width: 5rem;
-  margin-left: -5px;
+  width: 5.5rem;
 }
 .ControlValve {
   width: 5rem;
-  height: 5rem;
+  height: 5.5rem;
 }
 .HandValve {
-  width: 4.5rem;
+  width: 5rem;
 }
 .Join {
   margin-top: -5px;
@@ -104,6 +100,11 @@ body {
   width: 6rem;
   height: 4rem;
 }
+.flowMeter {
+  height: 4rem;
+  width: 5rem;
+}
+
 .toolscontainer-2-1 {
   display: flex;
   flex-direction: row !important;
@@ -981,18 +982,20 @@ body::-webkit-scrollbar-thumb {
 
 input:focus {
   outline: none;
-  padding: 10px;
-  margin-top: -5px;
-  width: 200px;
+  /* padding: 10px; */
+  /* margin-top: -5px; */
+  /* width: 200px; */
   border-color: #0056b3;
-  box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
+  /* box-shadow: 0 0 5px rgba(0, 91, 187, 0.5); */
 }
 
-.edit-container {
+.edit-container,
+.edit-container1 {
   display: flex;
   align-items: flex-start;
 }
-.edit-container span {
+.edit-container span,
+.edit-container1 span {
   margin-top: 5px;
 }
 
@@ -1006,13 +1009,14 @@ input:focus {
 
 .jj-switch {
   display: flex;
+  align-items: center;
   font-family: sans-serif;
   font-size: 14px;
   width: 100%;
   height: 70%;
   background: white;
   border: 1px solid #cad8e3;
-  position: static;
+  position: relative;
   padding: 3px;
   box-sizing: border-box;
   border-radius: 4px;
@@ -1021,15 +1025,10 @@ input:focus {
 }
 
 .jj-switch-label {
-  width: 100%;
   text-align: center;
-  margin: 0 0 2px 0;
 }
 
 .jj-switch-on {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background: var(--accent-color);
   color: #dde6ed;
   border-radius: 4px 0 0 4px;
@@ -1040,9 +1039,6 @@ input:focus {
 }
 
 .jj-switch-off {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background: #131e29;
   color: #dde6ed;
   border-radius: 0 4px 4px 0;
@@ -1071,6 +1067,7 @@ input:focus {
 }
 
 .jj-checkbox-input {
+  display: flex;
   accent-color: var(--accent-color);
 }
 
@@ -1079,8 +1076,8 @@ input:focus {
 .jj-slider {
   font-family: sans-serif;
   font-size: 14px;
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 80%;
   background: white;
   border: 1px solid #cad8e3;
   position: static;
@@ -1106,4 +1103,30 @@ input:focus {
   display: block;
   font-size: 12px;
   color: #40668c;
+}
+
+/* rotate button */
+.rotate-btn {
+  margin-left: 10px;
+  padding: 4px 8px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.rotate-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Flow Meter */
+.flowInput {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 100%;
+  color: black;
+  font-weight: 900;
 }

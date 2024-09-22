@@ -25,7 +25,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
 
-    <link
+    <!-- <link
       href="https://www.fiscoclic.mx/validadorcfdi/dist-assets/css/themes/lite-blue-fisco.css"
       rel="stylesheet"
     />
@@ -36,7 +36,7 @@
     <link
       href="https://www.fiscoclic.mx/validadorcfdi/dist-assets/css/plugins/metisMenu.min.css"
       rel="stylesheet"
-    />
+    /> -->
 
     <style>
       .blue-btn:hover,
@@ -252,7 +252,7 @@
       <div class="main-content">
         <div class="main">
           <!--------------------------left pannel---------------------------------- -->
-          <div id="toolscontainer">
+          <div id="toolscontainer" style="margin-left: 20px">
             <div class="toolscontainer-2" id="draggableElementContainerPaper">
               <div class="toolscontainer-2-1">
                 <i class="fa fa-sort-desc paper-image-4" aria-hidden="true"></i>
@@ -264,10 +264,10 @@
                 data-type="LiquidTank"
               >
                 <img
-                  class="paper-image-3 tank"
-                  src="./Images/Elements/Tank.png"
+                  class="paper-image-3 liquidTank"
+                  src="./Images/Elements/liquidTank.jpg"
                 />
-                <p class="toolstext-1" style="margin-left: 40px">Big Tank</p>
+                <p class="toolstext-1" style="margin-left: 45px">Liquid Tank</p>
               </div>
               <div
                 class="toolscontainer-2b drag"
@@ -278,7 +278,7 @@
                   class="paper-image-3 conicTank"
                   src="./Images/Elements/conicTank.png"
                 />
-                <p class="toolstext-2" style="margin-left: 30px">Conic Tank</p>
+                <p class="toolstext-2" style="margin-left: 35px">Conic Tank</p>
               </div>
               <div
                 class="toolscontainer-2c drag"
@@ -289,7 +289,7 @@
                   class="paper-image-3 pump"
                   src="./Images/Elements/pump.png"
                 />
-                <p class="toolstext-3" style="margin-left: 20px">Pump</p>
+                <p class="toolstext-3" style="margin-left: 15px">Pump</p>
               </div>
               <div
                 class="toolscontainer-2d drag"
@@ -300,7 +300,7 @@
                   class="paper-image-3 ControlValve"
                   src="./Images/Elements/ControlValve.png"
                 />
-                <p class="toolstext-4" style="margin-left: 10px">
+                <p class="toolstext-4" style="margin-left: 15px">
                   ControlValve
                 </p>
               </div>
@@ -324,7 +324,7 @@
                   class="paper-image-3 Panel"
                   src="./Images/Elements/Panel.png"
                 />
-                <p class="toolstext-3" style="margin-left: 25px">Panel</p>
+                <p class="toolstext-3" style="margin-left: 30px">Panel</p>
               </div>
               <div
                 class="toolscontainer-2f drag"
@@ -347,6 +347,41 @@
                   src="./Images/Elements/Zone.png"
                 />
                 <p class="toolstext-3">Zone</p>
+              </div>
+              <div
+                class="toolscontainer-2h drag"
+                draggable="true"
+                data-type="BoosterPumpHouse"
+              >
+                <img
+                  class="paper-image-3 BoosterPumpHouse"
+                  src="./Images/Elements/pumpHouse.jpg"
+                />
+                <p class="toolstext-1" style="margin-left: 35px">
+                  BoosterPumpHouse
+                </p>
+              </div>
+              <div
+                class="toolscontainer-2i drag"
+                draggable="true"
+                data-type="SquareTank"
+              >
+                <img
+                  class="paper-image-3 squareTank"
+                  src="./Images/Elements/squareTank.jpg"
+                />
+                <p class="toolstext-1" style="margin-left: 35px">Square Tank</p>
+              </div>
+              <div
+                class="toolscontainer-2j drag"
+                draggable="true"
+                data-type="FlowMeter"
+              >
+                <img
+                  class="paper-image-3 flowMeter"
+                  src="./Images/Elements/flowMeter.jpg"
+                />
+                <p class="toolstext-1" style="margin-left: 10px">Flow Meter</p>
               </div>
             </div>
           </div>
@@ -387,12 +422,14 @@
                 <i
                   class="fa fa-undo json-img-m"
                   aria-hidden="true"
-                  onclick="GraphUndo()"
+                  id="undo-button"
+                  aria-disabled="true"
                 ></i>
                 <i
                   class="fa fa-repeat json-img-n"
                   aria-hidden="true"
-                  onclick="GraphRedo()"
+                  id="redo-button"
+                  aria-disabled="true"
                 ></i>
               </div>
             </div>
@@ -499,17 +536,17 @@
     <script src="./node_modules/dagre/dist/dagre.core.js"></script>
     <script src="./build/package/rappid.js"></script>
 
-    <script src="https://www.fiscoclic.mx/validadorcfdi/dist-assets/js/plugins/bootstrap.bundle.min.js"></script>
+    <!-- <script src="https://www.fiscoclic.mx/validadorcfdi/dist-assets/js/plugins/bootstrap.bundle.min.js"></script>
     <script src="https://www.fiscoclic.mx/validadorcfdi/dist-assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="https://www.fiscoclic.mx/validadorcfdi/dist-assets/js/scripts/script_2.min.js"></script>
     <script src="https://www.fiscoclic.mx/validadorcfdi/dist-assets/js/plugins/metisMenu.min.js"></script>
-    <script src="https://www.fiscoclic.mx/validadorcfdi/dist-assets/js/scripts/layout-sidebar-vertical.min.js"></script>
+    <script src="https://www.fiscoclic.mx/validadorcfdi/dist-assets/js/scripts/layout-sidebar-vertical.min.js"></script> -->
 
-    <!-- <script
+    <script
       src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
-    ></script> -->
+    ></script>
 
     <script>
       function toggelSidebar() {
@@ -522,7 +559,7 @@
       ("use strict");
     </script>
 
-    <script type="text/javascript">
+    <!-- <script type="text/javascript">
       $(document).ready(async () => {
         let json = localStorage.getItem("GraphJson");
         if (json == null) {
@@ -530,10 +567,11 @@
           json = localStorage.getItem("GraphJson");
         }
         createGraph(json);
-        graphsteps.push(json);
+        //graphsteps.push(json);
+
         flag = 0;
       });
-    </script>
+    </script> -->
     <!-------------------------Papers-------------------------------------------------------------------->
     <script src="./script/paper.js"></script>
 
