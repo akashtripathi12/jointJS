@@ -15,7 +15,7 @@ const append3rd = (cell) => {
 
   // Create the base list item with the image, name, and check icon
   let listItem = `
-    <li id="${element.id}" style="padding-top: 10px;">
+    <li id="${element.id}" class="element" style="padding-top: 10px;">
       <span>
         <strong>
           <img class="paper-image element" src="${
@@ -25,22 +25,56 @@ const append3rd = (cell) => {
         </strong>
         <i class="fa fa-check-circle check_icon"></i>
       </span>
-      <ul>
+      <ul class="UL-list">
   `;
 
   // For elements with edit functionality (like name editing)
   listItem += `
     <li class="UL" id="edit-container-${element.id}">
       <div class="edit-container">
-        <span id="${element.id}-name-display">NAME: ${element.attrs.label.text}</span>
+        <span class="display">NAME:</span>
+        <span id="${element.id}-name-display"> ${element.attrs.label.text}</span>
       </div>
     </li>`;
 
   // Conditionally add elements based on type
   if (element.type === "HandValve" || element.type === "ControlValve") {
     listItem += `
-      <li class = "UL">
-        <button id="rotate-${element.id}" class="rotate-btn">Rotate 90°</button>
+        <button id="rotate-${element.id}" class="rotate-btn UL">Rotate 90°</button>
+      `;
+  }
+
+  if (
+    element.type === "LiquidTank" ||
+    element.type === "squareTank" ||
+    element.type === "BoosterPumpHouse"
+  ) {
+    let waterLevel = 0;
+    if (parseFloat(element.attrs.waterLevel.text) === NaN) {
+      waterLevel = 0;
+    }
+    listItem += `
+      <li class="UL">
+        <div class="edit-container">
+          <span class="display">WaterLevel:</span>
+          <span id="${element.id}-waterLevel-display"> ${waterLevel}</span>
+        </div>
+      </li>`;
+  }
+
+  if (element.type === "FlowMeter") {
+    listItem += `
+      <li class="UL">
+        <div class="edit-container">
+          <span class="display">Meter:</span>
+          <input id="${element.id}-flow-m3h" class="flowInput" type="number" value="${element.attrs.flowRateM3h}"/>
+        </div>
+      </li>
+      <li class="UL">
+        <div class="edit-container">
+          <span class="display">Meter:</span>
+          <input id="${element.id}-flow-mld" class="flowInput" type="number" value="${element.attrs.flowRateMLD}"/>
+        </div>
       </li>`;
   }
 
@@ -51,34 +85,23 @@ const append3rd = (cell) => {
   ) {
     listItem += `
       <li class="UL">
-        <input id="level-${element.id}" type="number" min="0" max="5" step="0.01" value="0" placeholder="Set Level"/>
-      </li>`;
-  }
-
-  if (element.type === "FlowMeter") {
-    listItem += `
-      <li class="UL">
-        <input id="flow-m3h-${element.id}" class="flowInput" type="number" placeholder="${element.attrs.m3h.text}"/>
-      </li>
-      <li class="UL">
-        <input id="flow-mld-${element.id}" class="flowInput" type="number" placeholder="Flow: ${element.attrs.mld.text}"/>
-      </li>`;
-  }
-
-  if (element.type === "LiquidTank") {
-    listItem += `
-      <li class="UL">
-        <div class="edit-container1">
-          <span id="${element.id}-location-display">Location: ${element.attrs.location.text}</span>
+        <div class="edit-container">
+          <span class="display">Location:</span>
+          <span id="${element.id}-location-display">${element.attrs.location.text}</span>
         </div>
       </li>`;
   }
 
-  if (element.type === "LiquidTank" || element.type === "squareTank") {
+  if (
+    element.type === "LiquidTank" ||
+    element.type === "squareTank" ||
+    element.type === "BoosterPumpHouse"
+  ) {
     listItem += `
       <li class="UL">
-        <div class="edit-container1">
-          <span id="${element.id}-level-display">Level: ${element.attrs.graphlevel.text}</span>
+        <div class="edit-container">
+          <span class="display">CBM:</span>
+          <span id="${element.id}-level-display">${element.attrs.graphlevel.text}</span>
         </div>
       </li>`;
   }
@@ -97,25 +120,33 @@ const append3rd = (cell) => {
     editName(element.id);
   });
 
-  if (element.type === "LiquidTank") {
+  if (
+    element.type === "LiquidTank" ||
+    element.type === "squareTank" ||
+    element.type === "BoosterPumpHouse"
+  ) {
     $(`#${element.id}-location-display`).on("click", function () {
       editLocation(element.id);
     });
   }
 
-  if (element.type === "LiquidTank" || element.type === "squareTank") {
+  if (
+    element.type === "LiquidTank" ||
+    element.type === "squareTank" ||
+    element.type === "BoosterPumpHouse"
+  ) {
     $(`#${element.id}-level-display`).on("click", function () {
       editLevel(element.id);
     });
   }
 
   if (element.type === "FlowMeter") {
-    $(`#flow-m3h-${element.id}`).on("change", function () {
+    $(`#${element.id}-flow-m3h`).on("change", function () {
       let flow = parseFloat($(this).val());
       cell.updateFlowRate(flow, "m³/h");
     });
 
-    $(`#flow-mld-${element.id}`).on("change", function () {
+    $(`#${element.id}-flow-mld`).on("change", function () {
       let flow = parseFloat($(this).val());
       cell.updateFlowRate(flow, "MLD");
     });
@@ -132,17 +163,51 @@ const append3rd = (cell) => {
     element.type === "squareTank" ||
     element.type === "BoosterPumpHouse"
   ) {
-    $(`#level-${element.id}`).on("change", function () {
-      let level = parseFloat($(this).val());
-
-      if (isNaN(level) || level < 0 || level > 5) {
-        alert("Please enter a valid level between 0 and 5.");
-        return;
-      }
-      cell.setlevel((level / 5) * 100);
+    $(`#${element.id}-waterLevel-display`).on("click", function () {
+      editWaterLevel(element.id);
     });
   }
 };
+
+//Function to handle editing water Level
+function editWaterLevel(cellId) {
+  const waterLevelDisplay = document.getElementById(
+    `${cellId}-waterLevel-display`
+  );
+
+  // Replace the location display with an input field
+  waterLevelDisplay.innerHTML = `<input id="${cellId}-waterLevel-input" type="number"  onblur="saveWaterLevel('${cellId}')" onkeypress="handleEnter(event, '${cellId}')"/>`;
+
+  // Focus the input field
+  const input = document.getElementById(`${cellId}-waterLevel-input`);
+  input.focus();
+}
+
+// Function to handle saving waterLevel
+function saveWaterLevel(cellId) {
+  const input = document.getElementById(`${cellId}-waterLevel-input`);
+  const newWaterLevel = input.value.trim();
+
+  if (isNaN(newWaterLevel) || newWaterLevel < 0 || newWaterLevel > 5) {
+    alert("Please enter a valid level between 0 and 5.");
+    return;
+  }
+
+  // Update the waterLevel in the DOM
+  const locationDisplay = document.getElementById(
+    `${cellId}-waterLevel-display`
+  );
+  locationDisplay.innerHTML = `${newWaterLevel}`;
+
+  // Update the waterLevel in the cell model
+  const cell = graph.getCell(cellId);
+  if (cell) {
+    // Get the current text value of the water level
+    cell.setlevel((newWaterLevel / 5) * 100);
+    // Update only the numeric part of the waterlevel text attribute
+    cell.attr("waterlevel/text", newWaterLevel);
+  }
+}
 
 // Function to handle editing location
 function editLocation(cellId) {
@@ -164,7 +229,7 @@ function saveLocation(cellId) {
 
   // Update the location in the DOM
   const locationDisplay = document.getElementById(`${cellId}-location-display`);
-  locationDisplay.innerHTML = `Location : ${newLocation}`;
+  locationDisplay.innerHTML = `${newLocation}`;
 
   // Update the location in the cell model
   const cell = graph.getCell(cellId);
@@ -193,7 +258,7 @@ function saveLevel(cellId) {
 
   // Update the location in the DOM
   const levelDisplay = document.getElementById(`${cellId}-level-display`);
-  levelDisplay.innerHTML = `Level : ${newLevel}`;
+  levelDisplay.innerHTML = `${newLevel}`;
 
   // Update the location in the cell model
   const cell = graph.getCell(cellId);
@@ -237,9 +302,9 @@ function saveName(cellId) {
 // Function to handle pressing Enter to save the name
 function handleEnter(event, cellId) {
   if (event.key === "Enter") {
-    saveName(cellId);
-    saveLocation(cellId);
-    saveLevel(cellId);
+    // saveName(cellId);
+    // saveLocation(cellId);
+    // saveLevel(cellId);
   }
 }
 

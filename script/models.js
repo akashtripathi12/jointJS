@@ -126,7 +126,7 @@ const MAX_PRESSURE_COLOR = "#ED2637";
 const r = 30;
 const d = 10;
 const l = (3 * r) / 4;
-const step = 14;
+const step = 16;
 
 //-----------------------------------SquareTank Model--------------------------------------
 class squareTank extends dia.Element {
@@ -171,7 +171,7 @@ class squareTank extends dia.Element {
           textAnchor: "middle",
           textVerticalAnchor: "bottom",
           x: "60", // Center the label horizontally
-          y: "15%", // Adjust y positioning of the label
+          y: "150", // Adjust y positioning of the label
           fontSize: 18,
           fontFamily: "sans-serif",
           fill: "blue", // Tank label in black
@@ -190,6 +190,17 @@ class squareTank extends dia.Element {
           fill: "black",
           x: "115", // Center the label horizontally
           y: "100", // Adjust y positioning of the label
+          textAnchor: "middle",
+          textVerticalAnchor: "middle",
+        },
+        location: {
+          text: "Location", // Label text
+          fontSize: 14,
+          z: 10,
+          fontFamily: "Arial",
+          fill: "black",
+          x: "200", // Center the label horizontally
+          y: "120", // Adjust y positioning of the label
           textAnchor: "middle",
           textVerticalAnchor: "middle",
         },
@@ -247,6 +258,7 @@ class squareTank extends dia.Element {
       <text @selector="graphlevel"/>
       <text @selector="label"/>           <!-- Tank label -->
       <text @selector="waterLevel"/>
+      <text @selector="location"/>
     `;
   }
 
@@ -359,35 +371,21 @@ class LiquidTank extends dia.Element {
           textAnchor: "middle",
           textVerticalAnchor: "bottom",
           x: "60", // Center the label horizontally
-          y: "20%", // Adjust y positioning of the label
+          y: "190", // Adjust y positioning of the label
           fontSize: 18,
           fontFamily: "sans-serif",
           fill: "blue", // Tank label in black
         },
         location: {
-          text: "UMS", // Label text
+          text: "Location", // Label text
           fontSize: 14,
           z: 10,
           fontFamily: "Arial",
           fill: "black",
-          x: "200", // Center the label horizontally
-          y: "17%", // Adjust y positioning of the label
+          x: "190", // Center the label horizontally
+          y: "160", // Adjust y positioning of the label
           textAnchor: "middle",
           textVerticalAnchor: "middle",
-        },
-        labelShadow: {
-          x: "120",
-          y: "150",
-          height: "30",
-          width: "180",
-          fill: {
-            type: "linearGradient",
-            stops: [
-              { offset: "0%", color: "#d1d1d1" }, // Light metallic gray
-              { offset: "50%", color: "#f5f5f5" }, // Light gray in the middle
-              { offset: "100%", color: "#d1d1d1" }, // Darker gray towards the bottom
-            ],
-          },
         },
         graph: {
           x: "95",
@@ -402,7 +400,7 @@ class LiquidTank extends dia.Element {
           fontFamily: "Arial",
           fill: "black",
           x: "115", // Center the label horizontally
-          y: "14%", // Adjust y positioning of the label
+          y: "140", // Adjust y positioning of the label
           textAnchor: "middle",
           textVerticalAnchor: "middle",
         },
@@ -480,7 +478,6 @@ class LiquidTank extends dia.Element {
 
   preinitialize() {
     this.markup = util.svg`
-    <rect @selector="labelShadow"/>
     <path @selector="body"/>               <!-- Rectangle for the tank -->
       <path @selector="left"/>
       <path @selector="right"/>
@@ -635,13 +632,6 @@ class BoosterPumpHouse extends dia.Element {
           stroke: "black",
           strokeWidth: 2,
         },
-        // border: {
-        //   d: "M 5 5 L 215 5 L 215 255 L 5 255 Z", // Dotted border
-        //   fill: "none",
-        //   stroke: "black",
-        //   strokeWidth: 3,
-        //   strokeDasharray: "5,5",
-        // },
         label: {
           text: "Booster Pump House", // Tank label
           textAnchor: "middle",
@@ -657,7 +647,7 @@ class BoosterPumpHouse extends dia.Element {
           textAnchor: "middle",
           textVerticalAnchor: "bottom",
           x: "60", // Center the label horizontally
-          y: "20%", // Adjust y positioning of the label
+          y: "190", // Adjust y positioning of the label
           fontSize: 18,
           fontFamily: "sans-serif",
           fill: "blue", // Tank label in black
@@ -666,6 +656,29 @@ class BoosterPumpHouse extends dia.Element {
           x: "100",
           y: "50",
           href: "./Images/Elements/graph.svg",
+        },
+        location: {
+          text: "Location", // Label text
+          fontSize: 14,
+          z: 10,
+          fontFamily: "Arial",
+          fill: "black",
+          x: "190", // Center the label horizontally
+          y: "160", // Adjust y positioning of the label
+          textAnchor: "middle",
+          textVerticalAnchor: "middle",
+        },
+        graphlevel: {
+          text: "0 cbm", // Label text
+          fontSize: 8,
+          fontWeight: "bold",
+          z: 10,
+          fontFamily: "Arial",
+          fill: "black",
+          x: "125", // Center the label horizontally
+          y: "130", // Adjust y positioning of the label
+          textAnchor: "middle",
+          textVerticalAnchor: "middle",
         },
       },
       ports: {
@@ -728,7 +741,9 @@ class BoosterPumpHouse extends dia.Element {
       <path @selector="ladderSteps"/>  <!-- Ladder steps -->
       <image @selector="graph"/>       <!-- Dotted border -->
       <text @selector="label"/>        <!-- Title text -->
-      <text @selector="waterLevel"/> 
+      <text @selector="waterLevel"/>
+      <text @selector="location"/> 
+      <text @selector="graphlevel"/> 
     `;
   }
 
@@ -756,6 +771,10 @@ class BoosterPumpHouse extends dia.Element {
     if (embeddedPanel) {
       embeddedPanel.setLevel(newLevel); // Update the panel's level
     }
+  }
+
+  updateWaterLevel(level) {
+    this.attr("graphlevel/text", `${parseFloat(level)} cbm`);
   }
 }
 
@@ -1390,7 +1409,7 @@ class Panel extends dia.Element {
           fill: "lightgray",
         },
         panelTicks: {
-          transform: "translate(46, 15)",
+          transform: "translate(47, 6)",
           d: `M 0 0 h 8 M 0 ${step} h 8 M 0 ${step * 2} h 8 M 0 ${
             step * 3
           } h 8 M 0 ${step * 4} h 8 M 0 ${step * 5} h 8 M 0 ${step * 6}`,
@@ -1404,7 +1423,7 @@ class Panel extends dia.Element {
           textAnchor: "middle",
           textVerticalAnchor: "top",
           x: 60,
-          y: 10,
+          y: 0,
           lineHeight: step,
           fontSize: 10,
           fontFamily: "sans-serif",
@@ -1477,7 +1496,7 @@ class Panel extends dia.Element {
     this.set("level", newLevel);
 
     // Update the liquid height based on the new level
-    const liquidHeight = (newLevel / 100) * 70;
+    const liquidHeight = (newLevel / 100) * 80;
     this.attr("liquid/height", liquidHeight);
     this.attr("liquid/y", 85 - liquidHeight);
   }
