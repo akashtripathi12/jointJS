@@ -541,8 +541,16 @@ input[type="number"] {
   [id$="-location-display"] {
     width: 67%;
   }
+
+  [id$="-name-input"],
+  [id$="-location-input"],
+  [id$="-level-input"] {
+    cursor: pointer;
+    width: 90%;
+    border: none;
+  }
   #json3 {
-    width: 67vw;
+    width: 65vw;
   }
   .toolscontainer-2 p {
     font-size: 0.8rem;
@@ -566,7 +574,7 @@ input[type="number"] {
     overflow: hidden;
     float: right;
     clear: both;
-    width: 18vw;
+    width: 20vw;
     right: 0px;
     position: absolute;
   }
