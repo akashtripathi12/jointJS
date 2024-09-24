@@ -119,6 +119,11 @@ graph.on("add", (cell) => {
     panel.position(cell.position().x + 10, cell.position().y + 20);
     panel.addTo(graph);
     cell.embed(panel);
+  } else if (cell instanceof ConicTank) {
+    const panel = new Panel();
+    panel.position(cell.position().x + 5, cell.position().y + 10);
+    panel.addTo(graph);
+    cell.embed(panel);
   }
 });
 

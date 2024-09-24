@@ -785,8 +785,8 @@ class ConicTank extends dia.Element {
       ...super.defaults,
       type: "ConicTank",
       size: {
-        width: 110,
-        height: 80,
+        width: 130,
+        height: 110,
       },
       attrs: {
         root: {
@@ -853,6 +853,44 @@ class ConicTank extends dia.Element {
           text: "Conic Tank",
           href: "./Images/Elements/conicTank.png",
         },
+        waterLevel: {
+          text: "Level 0 m", // Tank label
+          textAnchor: "middle",
+          textVerticalAnchor: "bottom",
+          x: "140", // Center the label horizontally
+          y: "200", // Adjust y positioning of the label
+          fontSize: 18,
+          fontFamily: "sans-serif",
+          fill: "blue", // Tank label in black
+        },
+        graph: {
+          x: "80",
+          y: "10",
+          href: "./Images/Elements/graph.svg",
+        },
+        location: {
+          text: "Location", // Label text
+          fontSize: 14,
+          z: 10,
+          fontFamily: "Arial",
+          fill: "black",
+          x: "170", // Center the label horizontally
+          y: "110", // Adjust y positioning of the label
+          textAnchor: "middle",
+          textVerticalAnchor: "middle",
+        },
+        graphlevel: {
+          text: "0 cbm", // Label text
+          fontSize: 8,
+          fontWeight: "bold",
+          z: 10,
+          fontFamily: "Arial",
+          fill: "black",
+          x: "100", // Center the label horizontally
+          y: "90", // Adjust y positioning of the label
+          textAnchor: "middle",
+          textVerticalAnchor: "middle",
+        },
       },
       ports: {
         groups: {
@@ -861,7 +899,7 @@ class ConicTank extends dia.Element {
             position: {
               name: "bottom",
               args: {
-                y: "140",
+                y: "170",
               },
             },
           },
@@ -891,7 +929,41 @@ class ConicTank extends dia.Element {
           <rect @selector="body"/>
           <rect @selector="top"/>
           <text @selector="label" />
+          <text @selector="waterLevel"/>
+          <text @selector="location"/>
+          <text @selector="graphlevel"/>
+          <image @selector="graph" />
       `;
+  }
+
+  get level() {
+    return this.get("level") || 0;
+  }
+
+  setlevel(level) {
+    const newLevel = Math.max(0, Math.min(100, level)); // Clamp level between 0 and 100
+    this.set("level", newLevel);
+
+    // Update liquid fill for the tank
+    const levelHeight = (newLevel / 100) * 90; // Assume full height of indicator is 90px
+    this.attr("liquid/height", levelHeight);
+    this.attr("liquid/y", 140 - levelHeight); // Adjust y to move the liquid up
+
+    // Update the waterLevel text to display the current water level in meters
+    const waterLevelMeters = (newLevel / 20).toPrecision(4); // Assume 5 meters corresponds to 100%
+    this.attr("waterLevel/text", `Level: ${parseFloat(waterLevelMeters)} m`);
+
+    // Update the panel if it's embedded
+    const embeddedPanel = this.getEmbeddedCells().find(
+      (cell) => cell instanceof Panel
+    );
+    if (embeddedPanel) {
+      embeddedPanel.setLevel(newLevel); // Update the panel's level
+    }
+  }
+
+  updateWaterLevel(level) {
+    this.attr("graphlevel/text", `${parseFloat(level)} cbm`);
   }
 }
 

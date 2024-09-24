@@ -47,7 +47,8 @@ const append3rd = (cell) => {
   if (
     element.type === "LiquidTank" ||
     element.type === "squareTank" ||
-    element.type === "BoosterPumpHouse"
+    element.type === "BoosterPumpHouse" ||
+    element.type === "ConicTank"
   ) {
     let waterLevel = 0;
     if (parseFloat(element.attrs.waterLevel.text) === NaN) {
@@ -81,7 +82,8 @@ const append3rd = (cell) => {
   if (
     element.type === "LiquidTank" ||
     element.type === "squareTank" ||
-    element.type === "BoosterPumpHouse"
+    element.type === "BoosterPumpHouse" ||
+    element.type === "ConicTank"
   ) {
     listItem += `
       <li class="UL">
@@ -95,7 +97,8 @@ const append3rd = (cell) => {
   if (
     element.type === "LiquidTank" ||
     element.type === "squareTank" ||
-    element.type === "BoosterPumpHouse"
+    element.type === "BoosterPumpHouse" ||
+    element.type === "ConicTank"
   ) {
     listItem += `
       <li class="UL">
@@ -123,7 +126,8 @@ const append3rd = (cell) => {
   if (
     element.type === "LiquidTank" ||
     element.type === "squareTank" ||
-    element.type === "BoosterPumpHouse"
+    element.type === "BoosterPumpHouse" ||
+    element.type === "ConicTank"
   ) {
     $(`#${element.id}-location-display`).on("click", function () {
       editLocation(element.id);
@@ -133,7 +137,8 @@ const append3rd = (cell) => {
   if (
     element.type === "LiquidTank" ||
     element.type === "squareTank" ||
-    element.type === "BoosterPumpHouse"
+    element.type === "BoosterPumpHouse" ||
+    element.type === "ConicTank"
   ) {
     $(`#${element.id}-level-display`).on("click", function () {
       editLevel(element.id);
@@ -161,7 +166,8 @@ const append3rd = (cell) => {
   if (
     element.type === "LiquidTank" ||
     element.type === "squareTank" ||
-    element.type === "BoosterPumpHouse"
+    element.type === "BoosterPumpHouse" ||
+    element.type === "ConicTank"
   ) {
     $(`#${element.id}-waterLevel-display`).on("click", function () {
       editWaterLevel(element.id);
