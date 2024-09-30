@@ -98,6 +98,8 @@ function addElementToGraph(type, position) {
   undoStack.push(element);
 
   // Add the element to the graph
+  console.log(element);
+
   append3rd(element);
   graph.addCell(element);
 }

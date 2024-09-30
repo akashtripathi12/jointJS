@@ -109,6 +109,42 @@ const append3rd = (cell) => {
       </li>`;
   }
 
+  if (
+    element.type === "LiquidTank" ||
+    element.type === "squareTank" ||
+    element.type === "BoosterPumpHouse" ||
+    element.type === "ConicTank"
+  ) {
+    listItem += `
+    <li class="UL">
+        <div class="port-settings">
+          <div class="edit-container">
+            <span for="${element.id}-port-type" class="display">Port:</span>
+            <select id="${element.id}-port-type">
+              <option value="in">In</option>
+              <option value="out">Out</option>
+            </select>
+          </div>
+
+          <div class="edit-container">
+          <!-- Dropdown for selecting the position type (x or y) -->
+          <span for="${element.id}-position-type" class="display">Position:</span>
+          <select id="${element.id}-position-type">
+            <option value="x">X</option>
+            <option value="y">Y</option>
+          </select>
+          </div>
+
+          <div class="edit-container">
+            <!-- Input field for entering the position value -->
+            <span class="display">Position:</span>
+            <span id="${element.id}-position-display">0</span>
+          </div>
+        </div>
+    </li>
+  `;
+  }
+
   // Close the unordered list and list item
   listItem += `
       </ul>
@@ -123,6 +159,7 @@ const append3rd = (cell) => {
     editName(element.id);
   });
 
+  // Attach event listeners for location editing
   if (
     element.type === "LiquidTank" ||
     element.type === "squareTank" ||
@@ -134,6 +171,19 @@ const append3rd = (cell) => {
     });
   }
 
+  //Attach event listeners for portOut location editing
+  if (
+    element.type === "LiquidTank" ||
+    element.type === "squareTank" ||
+    element.type === "BoosterPumpHouse" ||
+    element.type === "ConicTank"
+  ) {
+    $(`#${element.id}-position-display`).on("click", function () {
+      editPortOut(element.id);
+    });
+  }
+
+  // Attach event listeners for panel Level editing
   if (
     element.type === "LiquidTank" ||
     element.type === "squareTank" ||
@@ -145,6 +195,7 @@ const append3rd = (cell) => {
     });
   }
 
+  // Attach event listeners for flowMeter editing
   if (element.type === "FlowMeter") {
     $(`#${element.id}-flow-m3h`).on("change", function () {
       let flow = parseFloat($(this).val());
@@ -157,12 +208,14 @@ const append3rd = (cell) => {
     });
   }
 
+  // Attach event listeners for rotation
   if (element.type === "HandValve" || element.type === "ControlValve") {
     $(`#rotate-${element.id}`).on("click", function () {
       cell.rotateValve(90); // Rotate the valve 90 degrees clockwise
     });
   }
 
+  // Attach event listeners for waterLevel editing
   if (
     element.type === "LiquidTank" ||
     element.type === "squareTank" ||
@@ -182,7 +235,7 @@ function editWaterLevel(cellId) {
   );
 
   // Replace the location display with an input field
-  waterLevelDisplay.innerHTML = `<input id="${cellId}-waterLevel-input" type="number"  onblur="saveWaterLevel('${cellId}')" onkeypress="handleEnter(event, '${cellId}')"/>`;
+  waterLevelDisplay.innerHTML = `<input id="${cellId}-waterLevel-input" type="number"  onblur="saveWaterLevel('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'waterLevel')"/>`;
 
   // Focus the input field
   const input = document.getElementById(`${cellId}-waterLevel-input`);
@@ -191,37 +244,42 @@ function editWaterLevel(cellId) {
 
 // Function to handle saving waterLevel
 function saveWaterLevel(cellId) {
-  const input = document.getElementById(`${cellId}-waterLevel-input`);
-  const newWaterLevel = input.value.trim();
+  try {
+    const input = document.getElementById(`${cellId}-waterLevel-input`);
+    let newWaterLevel = input.value.trim();
 
-  if (isNaN(newWaterLevel) || newWaterLevel < 0 || newWaterLevel > 5) {
-    alert("Please enter a valid level between 0 and 5.");
-    return;
-  }
+    if (newWaterLevel === "") {
+      newWaterLevel = 0;
+    }
 
-  // Update the waterLevel in the DOM
-  const locationDisplay = document.getElementById(
-    `${cellId}-waterLevel-display`
-  );
-  locationDisplay.innerHTML = `${newWaterLevel}`;
+    if (isNaN(newWaterLevel) || newWaterLevel < 0 || newWaterLevel > 5) {
+      alert("Please enter a valid level between 0 and 5.");
+      return;
+    }
 
-  // Update the waterLevel in the cell model
-  const cell = graph.getCell(cellId);
-  if (cell) {
-    // Get the current text value of the water level
-    cell.setlevel((newWaterLevel / 5) * 100);
-    // Update only the numeric part of the waterlevel text attribute
-    cell.attr("waterlevel/text", newWaterLevel);
-  }
+    // Update the waterLevel in the DOM
+    const locationDisplay = document.getElementById(
+      `${cellId}-waterLevel-display`
+    );
+    locationDisplay.innerHTML = `${newWaterLevel}`;
+
+    // Update the waterLevel in the cell model
+    const cell = graph.getCell(cellId);
+    if (cell) {
+      // Get the current text value of the water level
+      cell.setlevel((newWaterLevel / 5) * 100);
+      // Update only the numeric part of the waterlevel text attribute
+      cell.attr("waterlevel/text", newWaterLevel);
+    }
+  } catch (error) {}
 }
 
 // Function to handle editing location
 function editLocation(cellId) {
   const locationDisplay = document.getElementById(`${cellId}-location-display`);
-  const currentLocation = locationDisplay.innerText;
 
   // Replace the location display with an input field
-  locationDisplay.innerHTML = `<input id="${cellId}-location-input" type="text"  onblur="saveLocation('${cellId}')" onkeypress="handleEnter(event, '${cellId}')"/>`;
+  locationDisplay.innerHTML = `<input id="${cellId}-location-input" type="text"  onblur="saveLocation('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'location')"/>`;
 
   // Focus the input field
   const input = document.getElementById(`${cellId}-location-input`);
@@ -230,27 +288,34 @@ function editLocation(cellId) {
 
 // Function to handle saving location
 function saveLocation(cellId) {
-  const input = document.getElementById(`${cellId}-location-input`);
-  const newLocation = input.value.trim();
+  try {
+    const input = document.getElementById(`${cellId}-location-input`);
 
-  // Update the location in the DOM
-  const locationDisplay = document.getElementById(`${cellId}-location-display`);
-  locationDisplay.innerHTML = `${newLocation}`;
+    let newLocation = input.value.trim();
 
-  // Update the location in the cell model
-  const cell = graph.getCell(cellId);
-  if (cell) {
-    cell.attr("location/text", newLocation);
-  }
+    if (newLocation === "") {
+      newLocation = "Location";
+    }
 
-  console.log(`Updated location for ${cellId}: ${newLocation}`);
+    // Update the location in the DOM
+    const locationDisplay = document.getElementById(
+      `${cellId}-location-display`
+    );
+    if (newLocation !== "") locationDisplay.innerHTML = `${newLocation}`;
+
+    // Update the location in the cell model
+    const cell = graph.getCell(cellId);
+    if (cell) {
+      cell.attr("location/text", newLocation);
+    }
+  } catch (error) {}
 }
 
 function editLevel(cellId) {
   const levelDisplay = document.getElementById(`${cellId}-level-display`);
 
   // Replace the location display with an input field
-  levelDisplay.innerHTML = `<input id="${cellId}-level-input" type="number"  onblur="saveLevel('${cellId}')" onkeypress="handleEnter(event, '${cellId}')"/>`;
+  levelDisplay.innerHTML = `<input id="${cellId}-level-input" type="number"  onblur="saveLevel('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'level')"/>`;
 
   // Focus the input field
   const input = document.getElementById(`${cellId}-level-input`);
@@ -259,16 +324,22 @@ function editLevel(cellId) {
 
 // Function to handle saving location
 function saveLevel(cellId) {
-  const input = document.getElementById(`${cellId}-level-input`);
-  const newLevel = input.value.trim();
+  try {
+    const input = document.getElementById(`${cellId}-level-input`);
+    let newLevel = input.value.trim();
 
-  // Update the location in the DOM
-  const levelDisplay = document.getElementById(`${cellId}-level-display`);
-  levelDisplay.innerHTML = `${newLevel}`;
+    if (newLevel === "") {
+      newLevel = "0 cbm";
+    }
 
-  // Update the location in the cell model
-  const cell = graph.getCell(cellId);
-  cell.updateWaterLevel(newLevel);
+    // Update the location in the DOM
+    const levelDisplay = document.getElementById(`${cellId}-level-display`);
+    levelDisplay.innerHTML = `${newLevel}`;
+
+    // Update the location in the cell model
+    const cell = graph.getCell(cellId);
+    cell.updateWaterLevel(newLevel);
+  } catch (error) {}
 }
 
 // Function to turn the lower 'Name' into an editable input field
@@ -276,7 +347,7 @@ function editName(cellId) {
   const nameDisplay = document.getElementById(`${cellId}-name-display`);
 
   // Replace the name display with an input field
-  nameDisplay.innerHTML = `<input id="${cellId}-name-input" type="text"  onblur="saveName('${cellId}')" onkeypress="handleEnter(event, '${cellId}')"/>`;
+  nameDisplay.innerHTML = `<input id="${cellId}-name-input" type="text"  onblur="saveName('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'name')"/>`;
 
   // Focus the input field
   const input = document.getElementById(`${cellId}-name-input`);
@@ -285,32 +356,115 @@ function editName(cellId) {
 
 // Function to save the name once editing is done
 function saveName(cellId) {
-  const input = document.getElementById(`${cellId}-name-input`);
-  const newName = input.value;
+  try {
+    const cell = graph.getCell(cellId);
 
-  // Update the name in the DOM
-  const nameDisplay = document.getElementById(`${cellId}-name-display`);
-  nameDisplay.innerHTML = newName;
+    const input = document.getElementById(`${cellId}-name-input`);
+    let newName = input.value;
+    if (newName === "") {
+      newName = cell.attr("label/text");
+    }
+    // Update the name in the DOM
+    const nameDisplay = document.getElementById(`${cellId}-name-display`);
+    nameDisplay.innerHTML = newName;
 
-  // Update the name in the main text
-  const mainText = document.getElementById(`${cellId}-text`);
-  mainText.innerText = newName;
+    // Update the name in the main text
+    const mainText = document.getElementById(`${cellId}-text`);
+    mainText.innerText = newName;
 
-  // Update the name in the cell model
-  const cell = graph.getCell(cellId);
-  if (cell) {
-    cell.attr("label/text", newName);
-  }
+    // Update the name in the cell model
 
-  console.log(`Updated name for ${cellId}: ${newName}`);
+    if (cell) {
+      cell.attr("label/text", newName);
+    }
+  } catch (error) {}
+}
+
+// Function to handle editing location
+function editPortOut(cellId) {
+  const portLocation = document.getElementById(`${cellId}-position-display`);
+
+  // Replace the location display with an input field
+  portLocation.innerHTML = `<input id="${cellId}-position-input" type="number"  onblur="savePortOut('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'portOut')"/>`;
+
+  // Focus the input field
+  const input = document.getElementById(`${cellId}-position-input`);
+  input.focus();
+}
+
+// Function to handle saving location
+function savePortOut(cellId) {
+  try {
+    const portTypeSelect = document.getElementById(`${cellId}-port-type`);
+    const positionTypeSelect = document.getElementById(
+      `${cellId}-position-type`
+    );
+    const input = document.getElementById(`${cellId}-position-input`);
+    let newPortOut = input.value.trim();
+
+    if (newPortOut === "") {
+      newPortOut = 0;
+    }
+
+    // Update the location in the DOM
+    const portLocation = document.getElementById(`${cellId}-position-display`);
+    portLocation.innerHTML = `${newPortOut}`;
+
+    // Update the location in the cell model
+    const cell = graph.getCell(cellId);
+    if (cell) {
+      let group = cell.get("ports");
+      //group.groups.out.position.args.y = newPortOut;
+
+      if (portTypeSelect.value === "out") {
+        if (positionTypeSelect.value === "y") {
+          group.groups.out.position.args.y = newPortOut;
+        } else if (positionTypeSelect.value === "x") {
+          group.groups.out.position.args.x = newPortOut;
+        }
+      }
+
+      if (portTypeSelect.value === "in") {
+        if (positionTypeSelect.value === "y") {
+          group.groups.in.position.args.y = newPortOut;
+        } else if (positionTypeSelect.value === "x") {
+          group.groups.in.position.args.x = newPortOut;
+        }
+      }
+
+      cell.trigger("change:ports", cell);
+
+      // Temporarily remove the cell
+      cell.remove({ disconnectLinks: false });
+
+      // Re-add the cell to the graph
+      graph.addCell(cell);
+    }
+  } catch (error) {}
 }
 
 // Function to handle pressing Enter to save the name
-function handleEnter(event, cellId) {
+function handleEnter(event, cellId, type) {
   if (event.key === "Enter") {
-    // saveName(cellId);
-    // saveLocation(cellId);
-    // saveLevel(cellId);
+    switch (type) {
+      case "portOut":
+        savePortOut(cellId);
+        break;
+      case "waterLevel":
+        saveWaterLevel(cellId);
+        break;
+      case "name":
+        saveName(cellId);
+        break;
+      case "location":
+        saveLocation(cellId);
+        break;
+      case "level":
+        saveLevel(cellId);
+        break;
+      default:
+        console.log("Invalid type");
+    }
   }
 }
 

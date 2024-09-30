@@ -229,6 +229,7 @@ class squareTank extends dia.Element {
           {
             group: "in",
             id: "in",
+            // z: 100,
             attrs: {
               label: {
                 text: "in",
@@ -412,6 +413,7 @@ class LiquidTank extends dia.Element {
             position: {
               args: {
                 y: 70,
+                x: 0,
               },
             },
           },
@@ -430,6 +432,7 @@ class LiquidTank extends dia.Element {
               name: "top",
               args: {
                 y: 40,
+                x: 100,
               },
             },
           },
@@ -441,7 +444,6 @@ class LiquidTank extends dia.Element {
           {
             group: "in",
             id: "in",
-            //z: 0,
             attrs: {
               label: {
                 text: "in",
@@ -489,30 +491,6 @@ class LiquidTank extends dia.Element {
       <text @selector="waterLevel"/>
       <text @selector="location"/>
     `;
-  }
-  // preinitialize() {
-  //   this.markup = `
-  //     <g class="rotatable">
-  //       <rect @selector="labelShadow"/>
-  //       <g class="scalable">
-  //         <path @selector="body"/> <!-- The main tank shape -->
-  //         <path @selector="left"/>
-  //         <path @selector="right"/>
-  //         <path @selector="topEllipse"/>   <!-- Ellipse for the top of the tank -->
-  //         <path @selector="bottomEllipse"/> <!-- Ellipse for the bottom of the tank -->
-  //       </g>
-  //       <text @selector="label"/> <!-- The tank label -->
-  //       <text @selector="waterLevel"/> <!-- The water level text -->
-  //       <image @selector="graph"/> <!-- The graph image -->
-  //       <text @selector="graphlevel"/> <!-- The graph level text -->
-  //     </g>
-  //   `;
-  // }
-
-  clone() {
-    const clone = super.clone();
-    clone.markup = this.markup; // Ensure markup is copied
-    return clone;
   }
 
   // Getter and setter for level

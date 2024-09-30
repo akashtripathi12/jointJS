@@ -110,6 +110,10 @@ body {
   flex-direction: row !important;
   background-color: whitesmoke;
 }
+.toolscontainer-2-1 i {
+  margin-top: 2px;
+  cursor: pointer;
+}
 .paper-image-4 {
   height: 0.25rem !important;
   width: 0.3rem !important;
@@ -117,10 +121,10 @@ body {
   margin-top: 9px;
 }
 .toolscontainer-2-1 h5 {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 300;
   background-color: whitesmoke;
-  margin-left: 14px;
+  margin-left: 28px;
   margin-top: 8px;
 }
 .toolstext-1,
@@ -490,10 +494,16 @@ input:focus {
   color: #000;
   display: flex;
   border: none;
-  justify-content: flex-start;
+  align-items: flex-start;
 }
 .edit-container span {
   margin-top: 5px;
+}
+
+.port-settings {
+  color: #000;
+  display: block;
+  border: none;
 }
 
 .display {
@@ -502,6 +512,7 @@ input:focus {
 
 [id$="-name-display"],
 [id$="-location-display"],
+[id$="-position-display"],
 [id$="-level-display"],
 [id$="-waterLevel-display"],
 [id$="-flow-mld"],
@@ -509,15 +520,51 @@ input:focus {
   cursor: pointer;
   border: 1px solid rgb(184, 177, 177) !important;
   border-radius: 5px !important;
-  width: 100%;
+  width: 80% !important;
   margin-left: 10px;
   padding: 5px;
+  height: 30px;
 }
 
-[id$="-waterLevel-input"] {
+/* [id$="-name-display"] {
+  margin-left: 40px;
+} */
+[id$="-location-display"] {
+  margin-left: 28px;
+}
+[id$="-level-display"] {
+  margin-left: 55px;
+}
+
+[id$="-position-type"],
+[id$="-port-type"] {
   cursor: pointer;
-  width: 70%;
-  border: none;
+  border: 1px solid rgb(184, 177, 177) !important;
+  border-radius: 5px !important;
+  width: 20% !important;
+  margin-left: 10px;
+  margin-top: 5px;
+  padding: 2px;
+}
+
+[id$="-port-type"] {
+  margin-left: 60px;
+}
+
+[id$="-position-type"] {
+  margin-left: 35px;
+}
+
+[id$="-position-display"] {
+  margin-left: 35px;
+}
+
+[id$="-name-input"],
+[id$="-location-input"],
+[id$="-position-input"],
+[id$="-level-input"],
+[id$="-waterLevel-input"] {
+  width: 90%;
 }
 
 input::-webkit-outer-spin-button,
@@ -538,13 +585,16 @@ input[type="number"] {
   [id$="-level-display"] {
     width: 80%;
   }
-  [id$="-location-display"] {
+  [id$="-location-display"],
+  [id$="-position-display"] {
     width: 67%;
   }
 
   [id$="-name-input"],
   [id$="-location-input"],
-  [id$="-level-input"] {
+  [id$="-level-input"],
+  [id$="-position-input"],
+  [id$="-position-type"] {
     cursor: pointer;
     width: 90%;
     border: none;
@@ -589,7 +639,7 @@ input[type="number"] {
   }
 }
 
-@media (min-width: 1600px) {
+@media (max-width: 2300px) {
   #paper {
     height: 100vh !important;
   }
@@ -630,23 +680,34 @@ input[type="number"] {
   }
 }
 
-@media (min-width: 2300px) {
+@media (min-width: 2400px) {
+  #paper {
+    height: 100vh !important;
+  }
   .center {
-    height: 0vh;
-    width: 80vw !important;
+    position: relative;
+    width: 69vw;
+    height: 100vh;
   }
-  .toolscontainer-2 p {
-    font-size: 1.5rem !important;
+  #container {
+    height: 100vh !important;
+
+    overflow: hidden;
+    border: none;
+    position: relative;
   }
-  .toolscontainer {
-    width: 20vw !important;
+
+  .panel3 {
+    height: 60vh !important;
   }
-  #json3 {
-    width: 67vw;
-    font-size: 25px;
-    justify-content: space-between !important;
-    background-color: whitesmoke;
+  #paper2 {
+    font-size: 35px;
   }
+  #paper2 h3 {
+    font-size: 30px;
+  }
+  /* #toolscontainer {
+  } */
 }
 
 #alertBox {
