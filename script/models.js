@@ -262,37 +262,6 @@ class squareTank extends dia.Element {
       <text @selector="location"/>
     `;
   }
-
-  // Getter and setter for level
-  get level() {
-    return this.get("level") || 0;
-  }
-
-  setlevel(level) {
-    const newLevel = Math.max(0, Math.min(100, level)); // Clamp level between 0 and 100
-    this.set("level", newLevel);
-
-    // Calculate the height for the liquid fill based on the level
-    const levelHeight = (newLevel / 100) * 90; // Assume full height of indicator is 90px
-    this.attr("liquid/height", levelHeight);
-    this.attr("liquid/y", 85 - levelHeight); // Adjust y to move the liquid up
-
-    // Update the waterLevel text to display the current water level in meters
-    const waterLevelMeters = (newLevel / 20).toPrecision(4); // Assume 5 meters corresponds to 100%
-    this.attr("waterLevel/text", `Level: ${parseFloat(waterLevelMeters)} m`);
-
-    // Update the panel if it's embedded
-    const embeddedPanel = this.getEmbeddedCells().find(
-      (cell) => cell instanceof Panel
-    );
-    if (embeddedPanel) {
-      embeddedPanel.setLevel(newLevel); // Update the panel's level
-    }
-  }
-
-  updateWaterLevel(level) {
-    this.attr("graphlevel/text", `${parseFloat(level)} cbm`);
-  }
 }
 
 //-----------------------------------LiquidTank Model--------------------------------------
@@ -724,36 +693,6 @@ class BoosterPumpHouse extends dia.Element {
       <text @selector="graphlevel"/> 
     `;
   }
-
-  get level() {
-    return this.get("level") || 0;
-  }
-
-  setlevel(level) {
-    const newLevel = Math.max(0, Math.min(100, level)); // Clamp level between 0 and 100
-    this.set("level", newLevel);
-
-    // Update liquid fill for the tank
-    const levelHeight = (newLevel / 100) * 90; // Assume full height of indicator is 90px
-    this.attr("liquid/height", levelHeight);
-    this.attr("liquid/y", 140 - levelHeight); // Adjust y to move the liquid up
-
-    // Update the waterLevel text to display the current water level in meters
-    const waterLevelMeters = (newLevel / 20).toPrecision(4); // Assume 5 meters corresponds to 100%
-    this.attr("waterLevel/text", `Level: ${parseFloat(waterLevelMeters)} m`);
-
-    // Update the panel if it's embedded
-    const embeddedPanel = this.getEmbeddedCells().find(
-      (cell) => cell instanceof Panel
-    );
-    if (embeddedPanel) {
-      embeddedPanel.setLevel(newLevel); // Update the panel's level
-    }
-  }
-
-  updateWaterLevel(level) {
-    this.attr("graphlevel/text", `${parseFloat(level)} cbm`);
-  }
 }
 
 //-----------------------------------Conic Tank Model--------------------------------------
@@ -913,36 +852,6 @@ class ConicTank extends dia.Element {
           <image @selector="graph" />
       `;
   }
-
-  get level() {
-    return this.get("level") || 0;
-  }
-
-  setlevel(level) {
-    const newLevel = Math.max(0, Math.min(100, level)); // Clamp level between 0 and 100
-    this.set("level", newLevel);
-
-    // Update liquid fill for the tank
-    const levelHeight = (newLevel / 100) * 90; // Assume full height of indicator is 90px
-    this.attr("liquid/height", levelHeight);
-    this.attr("liquid/y", 140 - levelHeight); // Adjust y to move the liquid up
-
-    // Update the waterLevel text to display the current water level in meters
-    const waterLevelMeters = (newLevel / 20).toPrecision(4); // Assume 5 meters corresponds to 100%
-    this.attr("waterLevel/text", `Level: ${parseFloat(waterLevelMeters)} m`);
-
-    // Update the panel if it's embedded
-    const embeddedPanel = this.getEmbeddedCells().find(
-      (cell) => cell instanceof Panel
-    );
-    if (embeddedPanel) {
-      embeddedPanel.setLevel(newLevel); // Update the panel's level
-    }
-  }
-
-  updateWaterLevel(level) {
-    this.attr("graphlevel/text", `${parseFloat(level)} cbm`);
-  }
 }
 
 //-----------------------------------Pump Model--------------------------------------
@@ -1009,6 +918,10 @@ class Pump extends dia.Element {
           stroke: "#222",
           strokeWidth: 3,
           fill: "#bbb",
+        },
+        controls: {
+          type: "checkbox",
+          checked: false,
         },
       },
       ports: {
@@ -1189,6 +1102,9 @@ class ControlValve extends dia.Element {
       },
       open: 1,
       attrs: {
+        controls: {
+          type: "slider",
+        },
         root: {
           magnetSelector: "body",
         },
@@ -1414,12 +1330,6 @@ class ControlValve extends dia.Element {
     };
   }
 
-  rotateValve(degrees) {
-    const currentAngle = this.get("angle") || 0; // Get the current angle
-    const newAngle = currentAngle + degrees; // Calculate the new angle
-    this.rotate(newAngle, true); // Apply the rotation to the element
-  }
-
   preinitialize() {
     this.markup = util.svg/* xml */ `
           <rect @selector="stem" />
@@ -1540,16 +1450,6 @@ class Panel extends dia.Element {
             <rect @selector="frame"/>
       `;
   }
-
-  setLevel(level) {
-    const newLevel = Math.max(0, Math.min(100, level)); // Clamp level between 0 and 100
-    this.set("level", newLevel);
-
-    // Update the liquid height based on the new level
-    const liquidHeight = (newLevel / 100) * 80;
-    this.attr("liquid/height", liquidHeight);
-    this.attr("liquid/y", 85 - liquidHeight);
-  }
 }
 
 //-----------------------------------Zone Model--------------------------------------
@@ -1633,6 +1533,9 @@ class HandValve extends dia.Element {
       },
       power: 0,
       attrs: {
+        controls: {
+          type: "button",
+        },
         body: {
           rx: "calc(w / 2)",
           ry: "calc(h / 2)",
@@ -1828,12 +1731,6 @@ class HandValve extends dia.Element {
         ],
       },
     };
-  }
-
-  rotateValve(degrees) {
-    const currentAngle = this.get("angle") || 0; // Get the current angle
-    const newAngle = currentAngle + degrees; // Calculate the new angle
-    this.rotate(newAngle, true); // Apply the rotation to the element
   }
 
   preinitialize() {
@@ -2215,31 +2112,5 @@ class FlowMeter extends dia.Element {
       <text @selector="mld" />
       <text @selector="m3h" />
     `;
-  }
-
-  convertM3hToMLD(m3h) {
-    return (m3h * 0.024).toFixed(2);
-  }
-
-  // Convert flow rate from MLD to m³/h
-  convertMLDToM3h(mld) {
-    return (mld / 0.024).toFixed(2);
-  }
-
-  // Update flow rate dynamically
-  updateFlowRate(value, unit = "m³/h") {
-    if (unit === "m³/h") {
-      const mld = this.convertM3hToMLD(value);
-      this.set("flowRateM3h", parseFloat(value));
-      this.set("flowRateMLD", parseFloat(mld));
-      this.attr("m3h/text", `Flow: ${parseFloat(value)} m³/h`);
-      this.attr("mld/text", `${parseFloat(mld)} MLD`);
-    } else if (unit === "MLD") {
-      const m3h = this.convertMLDToM3h(value);
-      this.set("flowRateMLD", value);
-      this.set("flowRateM3h", m3h);
-      this.attr("m3h/text", `Flow: ${parseFloat(m3h)} m³/h`);
-      this.attr("mld/text", `${parseFloat(value)} MLD`);
-    }
   }
 }

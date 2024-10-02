@@ -1,5 +1,4 @@
 //--------------------------right pannel list-------------------------------
-
 const disableClick = () => {
   //console.log("Wont Open ");
   $("#paper2li")
@@ -12,6 +11,10 @@ const disableClick = () => {
 // Append the element to the list with a blue-themed UI and editable name in the lower <li>
 const append3rd = (cell) => {
   let element = cell.attributes;
+  if (element === undefined) {
+    element = cell;
+    if (element.type === "Panel") return;
+  }
 
   // Create the base list item with the image, name, and check icon
   let listItem = `
@@ -68,13 +71,13 @@ const append3rd = (cell) => {
       <li class="UL">
         <div class="edit-container">
           <span class="display">Meter:</span>
-          <input id="${element.id}-flow-m3h" class="flowInput" type="number" value="${element.attrs.flowRateM3h}"/>
+          <input id="${element.id}-flow-m3h" class="flowInput" type="number" placeholder="0"/>
         </div>
       </li>
       <li class="UL">
         <div class="edit-container">
           <span class="display">Meter:</span>
-          <input id="${element.id}-flow-mld" class="flowInput" type="number" value="${element.attrs.flowRateMLD}"/>
+          <input id="${element.id}-flow-mld" class="flowInput" type="number" placeholder="0"/>
         </div>
       </li>`;
   }
@@ -121,24 +124,27 @@ const append3rd = (cell) => {
           <div class="edit-container">
             <span for="${element.id}-port-type" class="display">Port:</span>
             <select id="${element.id}-port-type">
-              <option value="in">In</option>
-              <option value="out">Out</option>
+              <option value="in">in</option>
+              <option value="out">out</option>
             </select>
           </div>
 
-          <div class="edit-container">
-          <!-- Dropdown for selecting the position type (x or y) -->
-          <span for="${element.id}-position-type" class="display">Position:</span>
-          <select id="${element.id}-position-type">
-            <option value="x">X</option>
-            <option value="y">Y</option>
-          </select>
-          </div>
+            <div class="edit-container">
+              <!-- Input field for X position -->
+              <span class="display">Position-X:</span>
+              <span id="${element.id}-position-x-display">0</span>
+            </div>
+
+            <div class="edit-container">
+              <!-- Input field for Y position -->
+              <span class="display">Position-Y:</span>
+              <span id="${element.id}-position-y-display">0</span>
+            </div>
 
           <div class="edit-container">
             <!-- Input field for entering the position value -->
-            <span class="display">Position:</span>
-            <span id="${element.id}-position-display">0</span>
+            <span class="display">Size:</span>
+            <span id="${element.id}-size-display">0</span>
           </div>
         </div>
     </li>
@@ -171,15 +177,26 @@ const append3rd = (cell) => {
     });
   }
 
-  //Attach event listeners for portOut location editing
+  //Attach event listeners for port adjustment location editing
   if (
     element.type === "LiquidTank" ||
     element.type === "squareTank" ||
     element.type === "BoosterPumpHouse" ||
     element.type === "ConicTank"
   ) {
-    $(`#${element.id}-position-display`).on("click", function () {
-      editPortOut(element.id);
+    // Attach event listeners for editing Position-X
+    $(`#${element.id}-position-x-display`).on("click", function () {
+      editPositionX(element.id);
+    });
+
+    // Attach event listeners for editing Position-Y
+    $(`#${element.id}-position-y-display`).on("click", function () {
+      editPositionY(element.id);
+    });
+
+    // Attach event listeners for editing Size
+    $(`#${element.id}-size-display`).on("click", function () {
+      editSize(element.id); // Open edit mode for Size
     });
   }
 
@@ -198,20 +215,23 @@ const append3rd = (cell) => {
   // Attach event listeners for flowMeter editing
   if (element.type === "FlowMeter") {
     $(`#${element.id}-flow-m3h`).on("change", function () {
+      cell = graph.getCell(element.id);
       let flow = parseFloat($(this).val());
-      cell.updateFlowRate(flow, "m³/h");
+      updateFlowRate(cell, flow, "m³/h");
     });
 
     $(`#${element.id}-flow-mld`).on("change", function () {
+      cell = graph.getCell(element.id);
       let flow = parseFloat($(this).val());
-      cell.updateFlowRate(flow, "MLD");
+      updateFlowRate(cell, flow, "MLD");
     });
   }
 
   // Attach event listeners for rotation
   if (element.type === "HandValve" || element.type === "ControlValve") {
     $(`#rotate-${element.id}`).on("click", function () {
-      cell.rotateValve(90); // Rotate the valve 90 degrees clockwise
+      cell = graph.getCell(element.id);
+      cell.rotate(90); // Rotate the valve 90 degrees clockwise
     });
   }
 
@@ -267,7 +287,8 @@ function saveWaterLevel(cellId) {
     const cell = graph.getCell(cellId);
     if (cell) {
       // Get the current text value of the water level
-      cell.setlevel((newWaterLevel / 5) * 100);
+      setLevel(cell, (newWaterLevel / 5) * 100);
+
       // Update only the numeric part of the waterlevel text attribute
       cell.attr("waterlevel/text", newWaterLevel);
     }
@@ -338,7 +359,9 @@ function saveLevel(cellId) {
 
     // Update the location in the cell model
     const cell = graph.getCell(cellId);
-    cell.updateWaterLevel(newLevel);
+    if (cell) {
+      updateWaterLevel(cell, newLevel);
+    }
   } catch (error) {}
 }
 
@@ -381,74 +404,193 @@ function saveName(cellId) {
 }
 
 // Function to handle editing location
-function editPortOut(cellId) {
-  const portLocation = document.getElementById(`${cellId}-position-display`);
+function editPositionX(cellId) {
+  const positionXDisplay = document.getElementById(
+    `${cellId}-position-x-display`
+  );
 
-  // Replace the location display with an input field
-  portLocation.innerHTML = `<input id="${cellId}-position-input" type="number"  onblur="savePortOut('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'portOut')"/>`;
+  // Replace the position-X display with an input field
+  positionXDisplay.innerHTML = `<input id="${cellId}-position-x-input" type="number" onblur="savePositionX('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'position-x')"/>`;
 
   // Focus the input field
-  const input = document.getElementById(`${cellId}-position-input`);
-  input.focus();
+  const inputX = document.getElementById(`${cellId}-position-x-input`);
+  inputX.focus();
+}
+function editPositionY(cellId) {
+  const positionYDisplay = document.getElementById(
+    `${cellId}-position-y-display`
+  );
+
+  // Replace the position-Y display with an input field
+  positionYDisplay.innerHTML = `<input id="${cellId}-position-y-input" type="number" onblur="savePositionY('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'position-y')"/>`;
+
+  // Focus the input field
+  const inputY = document.getElementById(`${cellId}-position-y-input`);
+  inputY.focus();
 }
 
 // Function to handle saving location
-function savePortOut(cellId) {
+function savePositionX(cellId) {
   try {
     const portTypeSelect = document.getElementById(`${cellId}-port-type`);
-    const positionTypeSelect = document.getElementById(
-      `${cellId}-position-type`
-    );
-    const input = document.getElementById(`${cellId}-position-input`);
-    let newPortOut = input.value.trim();
+    const inputX = document.getElementById(`${cellId}-position-x-input`);
+    let newPositionX = parseFloat(inputX.value.trim());
 
-    if (newPortOut === "") {
-      newPortOut = 0;
+    if (isNaN(newPositionX)) {
+      newPositionX = 0;
+    }
+    if (newPositionX > 180 || newPositionX < -10) {
+      alert("Please input from range of -10 to 180");
+      newPositionX = 0;
     }
 
-    // Update the location in the DOM
-    const portLocation = document.getElementById(`${cellId}-position-display`);
-    portLocation.innerHTML = `${newPortOut}`;
+    // Update the position-X in the DOM display
+    const positionXDisplay = document.getElementById(
+      `${cellId}-position-x-display`
+    );
+    try {
+      if (positionXDisplay) positionXDisplay.innerHTML = `${newPositionX}`;
+    } catch (error) {}
 
-    // Update the location in the cell model
+    // Update the position-X in the cell model based on the selected port type
     const cell = graph.getCell(cellId);
+    const elements = graph.getElements();
     if (cell) {
       let group = cell.get("ports");
-      //group.groups.out.position.args.y = newPortOut;
 
       if (portTypeSelect.value === "out") {
-        if (positionTypeSelect.value === "y") {
-          group.groups.out.position.args.y = newPortOut;
-        } else if (positionTypeSelect.value === "x") {
-          group.groups.out.position.args.x = newPortOut;
-        }
+        group.groups.out.position.args.x = newPositionX;
+      } else if (portTypeSelect.value === "in") {
+        group.groups.in.position.args.x = newPositionX;
       }
 
-      if (portTypeSelect.value === "in") {
-        if (positionTypeSelect.value === "y") {
-          group.groups.in.position.args.y = newPortOut;
-        } else if (positionTypeSelect.value === "x") {
-          group.groups.in.position.args.x = newPortOut;
-        }
-      }
-
+      // Trigger a change event to update the size in the graph
       cell.trigger("change:ports", cell);
-
-      // Temporarily remove the cell
-      cell.remove({ disconnectLinks: false });
-
-      // Re-add the cell to the graph
-      graph.addCell(cell);
+      elements.forEach((element) => {
+        element.remove({ disconnectLinks: false });
+        graph.addCell(element);
+      });
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error updating Position-X:", error);
+  }
+}
+function savePositionY(cellId) {
+  try {
+    const portTypeSelect = document.getElementById(`${cellId}-port-type`);
+    const inputY = document.getElementById(`${cellId}-position-y-input`);
+    let newPositionY = parseFloat(inputY.value.trim());
+
+    if (isNaN(newPositionY)) {
+      newPositionY = 0;
+    }
+    if (newPositionY > 180 || newPositionY < -10) {
+      alert("Please input from range of -10 to 180");
+      newPositionY = 0;
+    }
+
+    // Update the position-Y in the DOM display
+    const positionYDisplay = document.getElementById(
+      `${cellId}-position-y-display`
+    );
+    try {
+      if (positionYDisplay) positionYDisplay.innerHTML = `${newPositionY}`;
+    } catch (error) {}
+
+    // Update the position-Y in the cell model based on the selected port type
+    const cell = graph.getCell(cellId);
+    const elements = graph.getElements();
+    if (cell) {
+      let group = cell.get("ports");
+
+      if (portTypeSelect.value === "out") {
+        group.groups.out.position.args.y = newPositionY;
+      } else if (portTypeSelect.value === "in") {
+        group.groups.in.position.args.y = newPositionY;
+      }
+
+      // Trigger a change event to update the ports in the graph
+      cell.trigger("change:ports", cell);
+      elements.forEach((element) => {
+        element.remove({ disconnectLinks: false });
+        graph.addCell(element);
+      });
+    }
+  } catch (error) {
+    console.error("Error updating Position-Y:", error);
+  }
+}
+
+// Function to handle editing size for ports
+function editSize(cellId) {
+  const sizeDisplay = document.getElementById(`${cellId}-size-display`);
+
+  // Replace the size display with an input field
+  sizeDisplay.innerHTML = `<input id="${cellId}-size-input" type="number" onblur="saveSize('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'size')"/>`;
+
+  // Focus the input field
+  const inputSize = document.getElementById(`${cellId}-size-input`);
+  inputSize.focus();
+}
+
+// Function to handle saving Size for ports
+function saveSize(cellId) {
+  try {
+    const portTypeSelect = document.getElementById(`${cellId}-port-type`);
+    const inputSize = document.getElementById(`${cellId}-size-input`);
+    let newSize = parseFloat(inputSize.value.trim());
+
+    if (isNaN(newSize)) {
+      newSize = 1.3;
+    }
+
+    if (newSize < 1.3 || newSize > 8) {
+      alert("Please enter value between 1.3 to 8");
+      newSize = 1.3;
+    }
+
+    // Update the size in the DOM display
+    const sizeDisplay = document.getElementById(`${cellId}-size-display`);
+    try {
+      if (sizeDisplay) sizeDisplay.innerHTML = `${newSize}`;
+    } catch (error) {}
+
+    // Update the size in the cell model
+    const cell = graph.getCell(cellId);
+    if (cell) {
+      const elements = graph.getElements();
+
+      let group = cell.get("ports");
+      if (portTypeSelect.value === "out") {
+        group.groups.out.attrs.portBody.r = newSize;
+      } else if (portTypeSelect.value === "in") {
+        group.groups.in.attrs.portBody.r = newSize;
+      }
+
+      // Trigger a change event to update the size in the graph
+      cell.trigger("change:ports", cell);
+      elements.forEach((element) => {
+        element.remove({ disconnectLinks: false });
+        graph.addCell(element);
+      });
+    }
+  } catch (error) {
+    console.error("Error updating Size:", error);
+  }
 }
 
 // Function to handle pressing Enter to save the name
 function handleEnter(event, cellId, type) {
   if (event.key === "Enter") {
     switch (type) {
-      case "portOut":
-        savePortOut(cellId);
+      case "position-x":
+        savePositionX(cellId);
+        break;
+      case "position-y":
+        savePositionY(cellId);
+        break;
+      case "size":
+        saveSize(cellId);
         break;
       case "waterLevel":
         saveWaterLevel(cellId);
@@ -467,22 +609,6 @@ function handleEnter(event, cellId, type) {
     }
   }
 }
-
-//------------------------Graph Create from JSON
-// const createGraph = async (json) => {
-//   json = JSON.parse(json);
-//   await graph.fromJSON(json);
-//   // console.log(graph.fromJSON(json.attributes));
-
-//   console.log("Create Graph Function");
-//   json["cells"].forEach((cell) => {
-//     if (cell.type != "link") {
-//       append3rd(cell);
-//       console.log(cell);
-//     }
-//   });
-//   span();
-// };
 
 var elementvisible = (ID) => {
   $("#paper2li")
@@ -518,4 +644,69 @@ var elementdisable = (elementView) => {
         ul.style.display = "none"; // Hide each .UL for all LIs
       });
     });
+};
+
+// Convert flow rate from m³/h to MLD
+convertM3hToMLD = (m3h) => {
+  return (m3h * 0.024).toFixed(2);
+};
+
+// Convert flow rate from MLD to m³/h
+convertMLDToM3h = (mld) => {
+  return (mld / 0.024).toFixed(2);
+};
+
+// Update flow rate dynamically
+updateFlowRate = (cell, value, unit = "m³/h") => {
+  if (unit === "m³/h") {
+    const mld = convertM3hToMLD(value);
+    cell.set("flowRateM3h", parseFloat(value));
+    cell.set("flowRateMLD", parseFloat(mld));
+    cell.attr("m3h/text", `Flow: ${parseFloat(value)} m³/h`);
+    cell.attr("mld/text", `${parseFloat(mld)} MLD`);
+  } else if (unit === "MLD") {
+    const m3h = convertMLDToM3h(value);
+    cell.set("flowRateMLD", value);
+    cell.set("flowRateM3h", m3h);
+    cell.attr("m3h/text", `Flow: ${parseFloat(m3h)} m³/h`);
+    cell.attr("mld/text", `${parseFloat(value)} MLD`);
+  }
+};
+
+//LEVEL
+setLevel = (cell, level) => {
+  const newLevel = Math.max(0, Math.min(100, level)); // Clamp level between 0 and 100
+  cell.set("level", newLevel);
+
+  // Calculate the height for the liquid fill based on the level
+  const levelHeight = (newLevel / 100) * 90; // Assume full height of indicator is 90px
+  cell.attr("liquid/height", levelHeight);
+  cell.attr("liquid/y", 85 - levelHeight); // Adjust y to move the liquid up
+
+  // Update the waterLevel text to display the current water level in meters
+  const waterLevelMeters = (newLevel / 20).toPrecision(4); // Assume 5 meters corresponds to 100%
+  cell.attr("waterLevel/text", `Level: ${parseFloat(waterLevelMeters)} m`);
+
+  // Update the panel if it's embedded
+  const embeddedPanel = cell.getEmbeddedCells();
+
+  if (embeddedPanel) {
+    setLevelPanel(embeddedPanel[0], newLevel); // Update the panel's level
+  }
+};
+
+//level for panel
+setLevelPanel = (cell, level) => {
+  const newLevel = Math.max(0, Math.min(100, level)); // Clamp level between 0 and 100
+  cell.set("level", newLevel);
+
+  // Update the liquid height based on the new level
+  const liquidHeight = (newLevel / 100) * 80;
+  cell.attr("liquid/height", liquidHeight);
+  cell.attr("liquid/y", 85 - liquidHeight);
+};
+
+//graph level cbm
+updateWaterLevel = (cell, level) => {
+  cell.attr("graphlevel/text", `${parseFloat(level)} cbm`);
 };

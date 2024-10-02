@@ -65,10 +65,10 @@ function addElementToGraph(type, position) {
       element.position(position.x, position.y);
       break;
 
-    case "Panel":
-      element = new Panel();
-      element.position(position.x, position.y);
-      break;
+    // case "Panel":
+    //   element = new Panel();
+    //   element.position(position.x, position.y);
+    //   break;
 
     case "Join":
       element = new Join();
@@ -98,8 +98,6 @@ function addElementToGraph(type, position) {
   undoStack.push(element);
 
   // Add the element to the graph
-  console.log(element);
-
   append3rd(element);
   graph.addCell(element);
 }
@@ -182,6 +180,7 @@ undo.addEventListener("click", () => {
   if (element) {
     redoStack.push(element);
     element.remove();
+    console.log(redoStack);
   }
 });
 
@@ -193,10 +192,10 @@ redo.addEventListener("click", () => {
   }
 });
 
-graph.on("change:source change:target", function (link) {
-  if (link.get("source").id && link.get("target").id) {
-    //console.log("komal");
-    graphsteps.push(JSON.stringify(graph.toJSON()));
-    graph_undo_redo = [];
-  }
-});
+// graph.on("change:source change:target", function (link) {
+//   if (link.get("source").id && link.get("target").id) {
+//     //console.log("komal");
+//     graphsteps.push(JSON.stringify(graph.toJSON()));
+//     graph_undo_redo = [];
+//   }
+// });

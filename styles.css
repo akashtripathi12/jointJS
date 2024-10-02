@@ -512,7 +512,9 @@ input:focus {
 
 [id$="-name-display"],
 [id$="-location-display"],
-[id$="-position-display"],
+[id$="-position-x-display"],
+[id$="-position-y-display"],
+[id$="-size-display"],
 [id$="-level-display"],
 [id$="-waterLevel-display"],
 [id$="-flow-mld"],
@@ -536,7 +538,8 @@ input:focus {
   margin-left: 55px;
 }
 
-[id$="-position-type"],
+[id$="-position-x-display"],
+[id$="-position-y-display"],
 [id$="-port-type"] {
   cursor: pointer;
   border: 1px solid rgb(184, 177, 177) !important;
@@ -555,15 +558,22 @@ input:focus {
   margin-left: 35px;
 }
 
-[id$="-position-display"] {
-  margin-left: 35px;
+[id$="-position-x-display"],
+[id$="-position-y-display"] {
+  margin-left: 20px;
+}
+
+[id$="-size-display"] {
+  margin-left: 60px;
 }
 
 [id$="-name-input"],
 [id$="-location-input"],
-[id$="-position-input"],
+[id$="-position-x-input"],
+[id$="-position-y-input"],
 [id$="-level-input"],
-[id$="-waterLevel-input"] {
+[id$="-waterLevel-input"],
+[id$="-size-input"] {
   width: 90%;
 }
 
@@ -585,19 +595,29 @@ input[type="number"] {
   [id$="-level-display"] {
     width: 80%;
   }
+  [id$="-port-type"] {
+    width: 30% !important;
+  }
   [id$="-location-display"],
-  [id$="-position-display"] {
+  [id$="-position-x-display"],
+  [id$="-position-y-display"] {
     width: 67%;
   }
 
   [id$="-name-input"],
   [id$="-location-input"],
   [id$="-level-input"],
-  [id$="-position-input"],
-  [id$="-position-type"] {
+  [id$="-position-type"],
+  [id$="-size-input"] {
     cursor: pointer;
     width: 90%;
     border: none;
+  }
+
+  [id$="-position-x-input"],
+  [id$="-position-y-input"] {
+    width: 20%;
+    border: 1px solid black;
   }
   #json3 {
     width: 65vw;

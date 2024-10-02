@@ -139,6 +139,8 @@ const PumpView = joint.dia.ElementView.extend({
     let { spinAnimation } = this;
     if (spinAnimation) return spinAnimation;
     const [rotorEl] = this.findBySelector("rotor");
+    //console.log(rotorEl);
+
     // It's important to use start and end frames to make it work in Safari.
     const keyframes = { transform: ["rotate(0deg)", "rotate(360deg)"] };
     spinAnimation = rotorEl.animate(keyframes, {
@@ -152,7 +154,29 @@ const PumpView = joint.dia.ElementView.extend({
 
   togglePower() {
     const { model } = this;
-    this.getSpinAnimation().playbackRate = model.power;
+
+    // Log the power value for debugging purposes
+    if (model.power != undefined) {
+      //console.log("Current power value:", model.power);
+
+      // Check if model.power is a valid number
+      let power = model.power;
+      if (typeof power !== "number" || !isFinite(power)) {
+        power = 1; // Set a default playback rate if power is not valid
+      }
+
+      // Set the playback rate to the validated power value
+      this.getSpinAnimation().playbackRate = power;
+    } else {
+      //console.log("Current power value:", model.attributes.power);
+      let power = model.attributes.power;
+      if (typeof power !== "number" || !isFinite(power)) {
+        power = 1; // Set a default playback rate if power is not valid
+      }
+
+      // Set the playback rate to the validated power value
+      this.getSpinAnimation().playbackRate = power;
+    }
   },
 });
 const ControlValveView = joint.dia.ElementView.extend({
@@ -218,7 +242,7 @@ const ControlValveView = joint.dia.ElementView.extend({
 const PumpControl = joint.dia.HighlighterView.extend({
   UPDATE_ATTRIBUTES: ["power"],
   tagName: "g",
-  children: joint.util.svg/* xml */ `
+  children: joint.util.svg`
         <foreignObject width="20" height="20">
             <div class="jj-checkbox" xmlns="http://www.w3.org/1999/xhtml">
                 <input @selector="input" class="jj-checkbox-input" type="checkbox" style="width: 14px; height: 14px; box-sizing: border-box; margin: 2px;"/>
@@ -232,10 +256,18 @@ const PumpControl = joint.dia.HighlighterView.extend({
     transform: "translate(5, 5)",
   },
   highlight: function (cellView) {
+    console.log(cellView);
+
     this.renderChildren();
     this.childNodes.input.checked = Boolean(cellView.model.power);
   },
   onChange: function (evt) {
+    if (evt.target.checked === true) {
+      // Set the playback rate to the validated power value
+      this.cellView.getSpinAnimation().playbackRate = 1;
+    } else if (evt.target.checked === false) {
+      this.cellView.getSpinAnimation().playbackRate = 0;
+    }
     this.cellView.model.power = evt.target.checked ? 1 : 0;
   },
 });
@@ -318,6 +350,14 @@ const SliderValveControl = joint.dia.HighlighterView.extend({
   },
 });
 
+getPower = (cell) => {
+  return cell.get("power") || 0;
+};
+
+setPower = (cell, value) => {
+  cell.set("power", value);
+};
+
 //namespace and graph
 var namespace = {
   joint: joint.shapes,
@@ -394,6 +434,7 @@ paper.transformToFitContent({
 function addControls(paper) {
   const graph = paper.model;
   graph.getElements().forEach((cell) => {
+    //console.log(cell.findView(paper));
     switch (cell.get("type")) {
       case "ControlValve":
         SliderValveControl.add(cell.findView(paper), "root", "slider", {
