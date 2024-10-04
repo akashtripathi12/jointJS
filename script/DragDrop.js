@@ -100,6 +100,8 @@ function addElementToGraph(type, position) {
   // Add the element to the graph
   append3rd(element);
   graph.addCell(element);
+  const graphJson = graph.toJSON();
+  localStorage.setItem("GraphJson", graphJson);
 }
 
 // Listen for an element being added to the graph
@@ -119,37 +121,12 @@ graph.on("add", (cell) => {
     panel.position(cell.position().x + 10, cell.position().y + 20);
     panel.addTo(graph);
     cell.embed(panel);
+    panel.attr({ z: -1 }); // set z-index of panel to -1
   } else if (cell instanceof ConicTank) {
     const panel = new Panel();
     panel.position(cell.position().x + 5, cell.position().y + 10);
     panel.addTo(graph);
     cell.embed(panel);
-  }
-});
-
-// Handle dragging and moving the tank to keep the panel aligned
-graph.on("change:position", (element) => {
-  if (element instanceof LiquidTank) {
-    const embeddedElements = element.getEmbeddedCells();
-    embeddedElements.forEach((embedded) => {
-      if (embedded instanceof Panel) {
-        embedded.position(element.position().x + 10, element.position().y + 60); // Adjust as needed
-      }
-    });
-  } else if (element instanceof BoosterPumpHouse) {
-    const embeddedElements = element.getEmbeddedCells();
-    embeddedElements.forEach((embedded) => {
-      if (embedded instanceof Panel) {
-        embedded.position(element.position().x + 5, element.position().y + 60); // Adjust as needed
-      }
-    });
-  } else if (element instanceof squareTank) {
-    const embeddedElements = element.getEmbeddedCells();
-    embeddedElements.forEach((embedded) => {
-      if (embedded instanceof Panel) {
-        embedded.position(element.position().x + 10, element.position().y + 20); // Adjust as needed
-      }
-    });
   }
 });
 
@@ -164,7 +141,6 @@ paper.el.addEventListener(
 );
 $("#container").css("overflow", "hidden");
 
-//json save and upload
 let graphsteps = [],
   graph_undo_redo = [];
 
@@ -179,8 +155,19 @@ undo.addEventListener("click", () => {
   let element = undoStack.pop();
   if (element) {
     redoStack.push(element);
-    element.remove();
-    console.log(redoStack);
+    if (element.cid) {
+      element.remove();
+    } else {
+      if (element.embeds) {
+        let element2 = undoStack.pop();
+        redoStack.push(element2);
+        setupMutualRemoval(graph, element, element2);
+      } else if (element.parent) {
+        let element2 = undoStack.pop();
+        redoStack.push(element2);
+        setupMutualRemoval(graph, element2, element);
+      } else graph.getCell(element.id).remove();
+    }
   }
 });
 
@@ -188,14 +175,28 @@ redo.addEventListener("click", () => {
   let element = redoStack.pop();
   if (element) {
     undoStack.push(element);
-    graph.addCell(element);
+    if (element.cid) {
+      graph.addCell(element);
+    } else {
+      if (element.embeds || element.parent) {
+        let child = redoStack.pop();
+        undoStack.push(child);
+        addEmbeddedCell(graph, child, element);
+      } else {
+        graph.addCell(element);
+      }
+    }
   }
 });
 
-// graph.on("change:source change:target", function (link) {
-//   if (link.get("source").id && link.get("target").id) {
-//     //console.log("komal");
-//     graphsteps.push(JSON.stringify(graph.toJSON()));
-//     graph_undo_redo = [];
-//   }
-// });
+function addEmbeddedCell(graph, childElement, parentElement) {
+  graph.addCell(parentElement);
+  graph.addCell(childElement);
+}
+
+function setupMutualRemoval(graph, parentElement) {
+  const parent = graph.getCell(parentElement.id);
+  if (parent) {
+    parent.remove();
+  }
+}

@@ -1,4 +1,5 @@
 var portsIn = {
+  z: 10,
   position: {
     name: "left",
   },
@@ -207,42 +208,41 @@ class squareTank extends dia.Element {
       },
       ports: {
         groups: {
-          in: {
+          p1: {
             ...portsIn,
             position: {
               args: {
-                y: "10%",
+                y: "15",
               },
             },
           },
-          out: {
+          p2: {
             ...portsOut,
             position: {
-              name: "right",
               args: {
-                y: "80%",
+                y: "90",
+                x: "150",
               },
             },
           },
         },
         items: [
           {
-            group: "in",
-            id: "in",
-            // z: 100,
+            group: "p1",
+            id: "p1",
             attrs: {
               label: {
-                text: "in",
+                text: "p1",
                 fill: "#383838",
               },
             },
           },
           {
-            group: "out",
-            id: "out",
+            group: "p2",
+            id: "p2",
             attrs: {
               label: {
-                text: "out",
+                text: "p2",
                 fill: "#383838",
               },
             },
@@ -377,7 +377,7 @@ class LiquidTank extends dia.Element {
       },
       ports: {
         groups: {
-          in: {
+          p1: {
             ...portsIn,
             position: {
               args: {
@@ -386,7 +386,7 @@ class LiquidTank extends dia.Element {
               },
             },
           },
-          out: {
+          p2: {
             ...portsOut,
             position: {
               args: {
@@ -395,7 +395,7 @@ class LiquidTank extends dia.Element {
               },
             },
           },
-          in1: {
+          p3: {
             ...portsIn,
             position: {
               name: "top",
@@ -411,33 +411,33 @@ class LiquidTank extends dia.Element {
         },
         items: [
           {
-            group: "in",
-            id: "in",
+            group: "p1",
+            id: "p1",
             attrs: {
               label: {
-                text: "in",
+                text: "p1",
                 fill: "#383838",
               },
             },
           },
           {
-            group: "in1",
-            id: "in1",
+            group: "p3",
+            id: "p3",
             //z: 0,
             attrs: {
               label: {
-                text: "in",
+                text: "p3",
                 fill: "#383838",
               },
             },
           },
           {
-            group: "out",
-            id: "out",
+            group: "p2",
+            id: "p2",
             //z: 0,
             attrs: {
               label: {
-                text: "out",
+                text: "p2",
                 fill: "#383838",
               },
             },
@@ -630,42 +630,42 @@ class BoosterPumpHouse extends dia.Element {
       },
       ports: {
         groups: {
-          in: {
+          p1: {
             ...portsIn,
             position: {
               args: {
-                y: "50%",
+                y: "95",
               },
             },
           },
-          out: {
+          p2: {
             ...portsOut,
             position: {
               name: "right",
               args: {
-                x: "75%",
-                y: "50%",
+                x: "150",
+                y: "95",
               },
             },
           },
         },
         items: [
           {
-            group: "in",
-            id: "in",
+            group: "p1",
+            id: "p1",
             attrs: {
               label: {
-                text: "in",
+                text: "p1",
                 fill: "#383838",
               },
             },
           },
           {
-            group: "out",
-            id: "out",
+            group: "p2",
+            id: "p2",
             attrs: {
               label: {
-                text: "out",
+                text: "p2",
                 fill: "#383838",
               },
             },
@@ -811,12 +811,12 @@ class ConicTank extends dia.Element {
       },
       ports: {
         groups: {
-          in: {
+          p1: {
             ...portsIn,
             position: {
-              name: "bottom",
               args: {
                 y: "170",
+                x: "65",
               },
             },
           },
@@ -826,11 +826,11 @@ class ConicTank extends dia.Element {
         },
         items: [
           {
-            group: "in",
-            id: "in",
+            group: "p1",
+            id: "p1",
             attrs: {
               label: {
-                text: "in",
+                text: "p1",
                 fill: "#383838",
               },
             },

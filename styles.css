@@ -558,22 +558,22 @@ input:focus {
   margin-left: 35px;
 }
 
-[id$="-position-x-display"],
-[id$="-position-y-display"] {
-  margin-left: 20px;
+[id$="-position-x-slider"],
+[id$="-position-y-slider"],
+[id$="-size-slider"] {
+  width: 120px;
+  margin-top: 10px;
+  margin-left: 30px;
 }
 
-[id$="-size-display"] {
-  margin-left: 60px;
+[id$="-size-slider"] {
+  margin-left: 72px;
 }
 
 [id$="-name-input"],
 [id$="-location-input"],
-[id$="-position-x-input"],
-[id$="-position-y-input"],
 [id$="-level-input"],
-[id$="-waterLevel-input"],
-[id$="-size-input"] {
+[id$="-waterLevel-input"] {
   width: 90%;
 }
 
@@ -590,43 +590,47 @@ input[type="number"] {
 
 @media (max-width: 1600px) {
   [id$="-name-display"] {
-    width: 72%;
+    width: 72% !important;
   }
   [id$="-level-display"] {
-    width: 80%;
+    width: 80% !important;
   }
   [id$="-port-type"] {
-    width: 30% !important;
+    width: 30%;
   }
-  [id$="-location-display"],
-  [id$="-position-x-display"],
-  [id$="-position-y-display"] {
+  [id$="-location-display"] {
     width: 67%;
+    margin-left: 25px;
+  }
+  [id$="-position-x-slider"],
+  [id$="-position-y-slider"],
+  [id$="-size-slider"] {
+    width: 100px;
+    margin-top: 10px;
+    margin-left: 30px;
   }
 
+  [id$="-size-slider"] {
+    margin-left: 68px;
+  }
   [id$="-name-input"],
   [id$="-location-input"],
   [id$="-level-input"],
   [id$="-position-type"],
   [id$="-size-input"] {
-    cursor: pointer;
-    width: 90%;
-    border: none;
+    cursor: pointer !important;
+    width: 90% !important;
+    border: none !important;
   }
 
-  [id$="-position-x-input"],
-  [id$="-position-y-input"] {
-    width: 20%;
-    border: 1px solid black;
-  }
   #json3 {
-    width: 65vw;
+    width: 65vw !important;
   }
   .toolscontainer-2 p {
-    font-size: 0.8rem;
+    font-size: 0.8rem !important;
   }
   .center {
-    width: 70vw;
+    width: 70vw !important;
     height: 100vh !important;
   }
   #container {
@@ -644,9 +648,17 @@ input[type="number"] {
     overflow: hidden;
     float: right;
     clear: both;
-    width: 20vw;
+    width: 18vw !important;
     right: 0px;
     position: absolute;
+  }
+
+  #paper2 li {
+    font-size: 12px !important;
+  }
+
+  #paper2 li strong {
+    font-size: 14px !important;
   }
 
   #toolscontainer {
@@ -656,6 +668,12 @@ input[type="number"] {
     overflow-x: hidden;
     vertical-align: top;
     background-color: white !important;
+  }
+
+  .del-item h3 strong,
+  .del-item p {
+    font-size: 14px !important;
+    font-weight: normal !important;
   }
 }
 

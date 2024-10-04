@@ -256,8 +256,6 @@ const PumpControl = joint.dia.HighlighterView.extend({
     transform: "translate(5, 5)",
   },
   highlight: function (cellView) {
-    console.log(cellView);
-
     this.renderChildren();
     this.childNodes.input.checked = Boolean(cellView.model.power);
   },
@@ -517,21 +515,26 @@ var removeButton = new joint.elementTools.Remove({
     // Get the element that is being removed
     const removedElement = elementView.model;
 
-    // Save the remove action in the undo stack before removing the element
+    // Save the remove action in the undo stack before removing the element (if needed)
     // saveAction("remove", removedElement);
 
     // Remove the element from the graph
     removedElement.remove({ ui: true, tool: toolView.cid });
 
-    // Remove the associated DOM element, if needed
-    document.getElementById(removedElement.id).remove();
+    // Remove the associated main DOM element by ID
+    const mainElement = document.getElementById(removedElement.id);
+    if (mainElement) {
+      mainElement.remove();
+    }
 
-    // Reset visibility for the list items (you can customize this as per your UI needs)
+    // Reset visibility for the list items (customize this as per your UI needs)
     $("#paper2li")
       .children("LI")
       .each(function () {
         $(this).show();
-        this.querySelector(".UL").style.display = "none";
+        this.querySelectorAll(".UL").forEach((ul) => {
+          ul.style.display = "none";
+        });
       });
 
     // Clear the redo stack after the action

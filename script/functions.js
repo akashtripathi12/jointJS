@@ -112,6 +112,40 @@ const append3rd = (cell) => {
       </li>`;
   }
 
+  // Get available port types dynamically
+  const portGroups = element.ports.groups;
+  const portTypes = Object.keys(portGroups); // Get the port group names dynamically
+
+  // Generate the dropdown options dynamically based on the available port groups
+  let portOptions = portTypes
+    .map((port) => `<option value="${port}">${port}</option>`)
+    .join("");
+
+  // Set default port value to be the first available port type (if any)
+  const defaultPort = portTypes[0];
+
+  // Get initial position-X, position-Y, and size values based on the default port type
+  const initialPositionX = portGroups[defaultPort]?.position?.args?.x || 0;
+  const initialPositionY = portGroups[defaultPort]?.position?.args?.y || 0;
+  const initialSize = portGroups[defaultPort]?.attrs?.portBody?.r || 1.3;
+
+  let minX, minY, maxX, maxY;
+  if (element.type === "LiquidTank" || element.type === "BoosterPumpHouse") {
+    minX = 0;
+    minY = 30;
+    maxX = 150;
+    maxY = 160;
+  } else if (element.type === "ConicTank") {
+    minX = 0;
+    minY = 0;
+    maxX = 132;
+    maxY = 170;
+  } else if (element.type === "squareTank") {
+    minX = 0;
+    minY = 0;
+    maxX = 150;
+    maxY = 120;
+  }
   if (
     element.type === "LiquidTank" ||
     element.type === "squareTank" ||
@@ -120,35 +154,51 @@ const append3rd = (cell) => {
   ) {
     listItem += `
     <li class="UL">
-        <div class="port-settings">
-          <div class="edit-container">
-            <span for="${element.id}-port-type" class="display">Port:</span>
-            <select id="${element.id}-port-type">
-              <option value="in">in</option>
-              <option value="out">out</option>
-            </select>
-          </div>
-
-            <div class="edit-container">
-              <!-- Input field for X position -->
-              <span class="display">Position-X:</span>
-              <span id="${element.id}-position-x-display">0</span>
-            </div>
-
-            <div class="edit-container">
-              <!-- Input field for Y position -->
-              <span class="display">Position-Y:</span>
-              <span id="${element.id}-position-y-display">0</span>
-            </div>
-
-          <div class="edit-container">
-            <!-- Input field for entering the position value -->
-            <span class="display">Size:</span>
-            <span id="${element.id}-size-display">0</span>
-          </div>
-        </div>
+      <div class="edit-container">
+        <span for="${element.id}-port-type" class="display">Port:</span>
+        <select id="${element.id}-port-type" onchange="updatePortValues('${element.id}')">${portOptions}</select>
+      </div>
     </li>
-  `;
+    <li class="UL">
+      <div class="edit-container">
+        <span class="display">Position-X:</span>
+        
+        <input id="${element.id}-position-x-slider" 
+          type="range"
+          min="${minX}"
+          max="${maxX}"
+          step="1"
+          value="${initialPositionX}"
+          onmousemove="savePositionX('${element.id}', this.value)" 
+           />
+      </div>
+    </li>
+    <li class="UL">
+      <div class="edit-container">
+        <span class="display">Position-Y:</span>
+        <input id="${element.id}-position-y-slider" 
+          type="range"
+          min="${minY}"
+          max="${maxY}"
+          step="1"
+          value="${initialPositionY}"
+          onmousemove="savePositionY('${element.id}', this.value)" 
+           />
+      </div>
+    </li>
+    <li class="UL">
+      <div class="edit-container">
+        <span class="display">Size:</span>
+        <input id="${element.id}-size-slider" 
+          type="range"
+          min="1.3"
+          max="5"
+          step="0.1"
+          value="${initialSize}" 
+          onmousemove="saveSize('${element.id}', this.value)" 
+          />
+      </div>
+    </li>`;
   }
 
   // Close the unordered list and list item
@@ -255,7 +305,7 @@ function editWaterLevel(cellId) {
   );
 
   // Replace the location display with an input field
-  waterLevelDisplay.innerHTML = `<input id="${cellId}-waterLevel-input" type="number"  onblur="saveWaterLevel('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'waterLevel')"/>`;
+  waterLevelDisplay.innerHTML = `<input id="${cellId}-waterLevel-input" type="number"  onblur="saveWaterLevel('${cellId}')"/>`;
 
   // Focus the input field
   const input = document.getElementById(`${cellId}-waterLevel-input`);
@@ -274,7 +324,7 @@ function saveWaterLevel(cellId) {
 
     if (isNaN(newWaterLevel) || newWaterLevel < 0 || newWaterLevel > 5) {
       alert("Please enter a valid level between 0 and 5.");
-      return;
+      newWaterLevel = 0;
     }
 
     // Update the waterLevel in the DOM
@@ -300,7 +350,7 @@ function editLocation(cellId) {
   const locationDisplay = document.getElementById(`${cellId}-location-display`);
 
   // Replace the location display with an input field
-  locationDisplay.innerHTML = `<input id="${cellId}-location-input" type="text"  onblur="saveLocation('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'location')"/>`;
+  locationDisplay.innerHTML = `<input id="${cellId}-location-input" type="text"  onblur="saveLocation('${cellId}')"/>`;
 
   // Focus the input field
   const input = document.getElementById(`${cellId}-location-input`);
@@ -336,7 +386,7 @@ function editLevel(cellId) {
   const levelDisplay = document.getElementById(`${cellId}-level-display`);
 
   // Replace the location display with an input field
-  levelDisplay.innerHTML = `<input id="${cellId}-level-input" type="number"  onblur="saveLevel('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'level')"/>`;
+  levelDisplay.innerHTML = `<input id="${cellId}-level-input" type="number"  onblur="saveLevel('${cellId}')"/>`;
 
   // Focus the input field
   const input = document.getElementById(`${cellId}-level-input`);
@@ -370,7 +420,7 @@ function editName(cellId) {
   const nameDisplay = document.getElementById(`${cellId}-name-display`);
 
   // Replace the name display with an input field
-  nameDisplay.innerHTML = `<input id="${cellId}-name-input" type="text"  onblur="saveName('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'name')"/>`;
+  nameDisplay.innerHTML = `<input id="${cellId}-name-input" type="text"  onblur="saveName('${cellId}')"/>`;
 
   // Focus the input field
   const input = document.getElementById(`${cellId}-name-input`);
@@ -403,210 +453,131 @@ function saveName(cellId) {
   } catch (error) {}
 }
 
-// Function to handle editing location
-function editPositionX(cellId) {
-  const positionXDisplay = document.getElementById(
-    `${cellId}-position-x-display`
-  );
-
-  // Replace the position-X display with an input field
-  positionXDisplay.innerHTML = `<input id="${cellId}-position-x-input" type="number" onblur="savePositionX('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'position-x')"/>`;
-
-  // Focus the input field
-  const inputX = document.getElementById(`${cellId}-position-x-input`);
-  inputX.focus();
-}
-function editPositionY(cellId) {
-  const positionYDisplay = document.getElementById(
-    `${cellId}-position-y-display`
-  );
-
-  // Replace the position-Y display with an input field
-  positionYDisplay.innerHTML = `<input id="${cellId}-position-y-input" type="number" onblur="savePositionY('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'position-y')"/>`;
-
-  // Focus the input field
-  const inputY = document.getElementById(`${cellId}-position-y-input`);
-  inputY.focus();
-}
-
 // Function to handle saving location
 function savePositionX(cellId) {
   try {
     const portTypeSelect = document.getElementById(`${cellId}-port-type`);
-    const inputX = document.getElementById(`${cellId}-position-x-input`);
+    const selectedPortType = portTypeSelect ? portTypeSelect.value : null;
+    const inputX = document.getElementById(`${cellId}-position-x-slider`);
     let newPositionX = parseFloat(inputX.value.trim());
-
-    if (isNaN(newPositionX)) {
-      newPositionX = 0;
-    }
-    if (newPositionX > 180 || newPositionX < -10) {
-      alert("Please input from range of -10 to 180");
-      newPositionX = 0;
-    }
-
-    // Update the position-X in the DOM display
-    const positionXDisplay = document.getElementById(
-      `${cellId}-position-x-display`
-    );
-    try {
-      if (positionXDisplay) positionXDisplay.innerHTML = `${newPositionX}`;
-    } catch (error) {}
 
     // Update the position-X in the cell model based on the selected port type
     const cell = graph.getCell(cellId);
-    const elements = graph.getElements();
-    if (cell) {
+    if (cell && selectedPortType) {
       let group = cell.get("ports");
 
-      if (portTypeSelect.value === "out") {
-        group.groups.out.position.args.x = newPositionX;
-      } else if (portTypeSelect.value === "in") {
-        group.groups.in.position.args.x = newPositionX;
+      // Update the position-X of the selected port type dynamically
+      if (group.groups[selectedPortType]) {
+        group.groups[selectedPortType].position.args.x = newPositionX;
       }
 
-      // Trigger a change event to update the size in the graph
+      // Update the graph with the new position-X without removing/re-adding the cell
+      cell.set("ports", group); // Update the port group directly
       cell.trigger("change:ports", cell);
-      elements.forEach((element) => {
-        element.remove({ disconnectLinks: false });
-        graph.addCell(element);
-      });
+      cell.remove({ disconnectLinks: false });
+      graph.addCell(cell);
+      if (cell.attributes.power === 0) {
+        addPanel(cell.attributes.type, cell);
+      }
     }
   } catch (error) {
     console.error("Error updating Position-X:", error);
   }
 }
+
+let newPositionY;
+// Function to handle saving Y position for ports using the slider
 function savePositionY(cellId) {
   try {
     const portTypeSelect = document.getElementById(`${cellId}-port-type`);
-    const inputY = document.getElementById(`${cellId}-position-y-input`);
-    let newPositionY = parseFloat(inputY.value.trim());
-
-    if (isNaN(newPositionY)) {
-      newPositionY = 0;
-    }
-    if (newPositionY > 180 || newPositionY < -10) {
-      alert("Please input from range of -10 to 180");
-      newPositionY = 0;
-    }
-
-    // Update the position-Y in the DOM display
-    const positionYDisplay = document.getElementById(
-      `${cellId}-position-y-display`
-    );
-    try {
-      if (positionYDisplay) positionYDisplay.innerHTML = `${newPositionY}`;
-    } catch (error) {}
+    const selectedPortType = portTypeSelect ? portTypeSelect.value : null;
+    const inputY = document.getElementById(`${cellId}-position-y-slider`);
+    newPositionY = parseFloat(inputY.value.trim());
 
     // Update the position-Y in the cell model based on the selected port type
     const cell = graph.getCell(cellId);
-    const elements = graph.getElements();
-    if (cell) {
+    if (cell && selectedPortType) {
       let group = cell.get("ports");
 
-      if (portTypeSelect.value === "out") {
-        group.groups.out.position.args.y = newPositionY;
-      } else if (portTypeSelect.value === "in") {
-        group.groups.in.position.args.y = newPositionY;
+      // Update the position-X of the selected port type dynamically
+      if (group.groups[selectedPortType]) {
+        group.groups[selectedPortType].position.args.y = newPositionY;
       }
 
-      // Trigger a change event to update the ports in the graph
-      cell.trigger("change:ports", cell);
-      elements.forEach((element) => {
-        element.remove({ disconnectLinks: false });
-        graph.addCell(element);
-      });
+      // Update the graph with the new position-Y without removing/re-adding the cell
+      cell.set("ports", group); // Update the port group directly
+      cell.trigger("change:ports", cell); // Trigger the change event
+      cell.remove({ disconnectLinks: false });
+      graph.addCell(cell);
+      if (cell.attributes.power === 0) {
+        addPanel(cell.attributes.type, cell);
+      }
     }
   } catch (error) {
     console.error("Error updating Position-Y:", error);
   }
 }
 
-// Function to handle editing size for ports
-function editSize(cellId) {
-  const sizeDisplay = document.getElementById(`${cellId}-size-display`);
-
-  // Replace the size display with an input field
-  sizeDisplay.innerHTML = `<input id="${cellId}-size-input" type="number" onblur="saveSize('${cellId}')" onkeypress="handleEnter(event, '${cellId}', 'size')"/>`;
-
-  // Focus the input field
-  const inputSize = document.getElementById(`${cellId}-size-input`);
-  inputSize.focus();
-}
-
-// Function to handle saving Size for ports
+let currentSize;
+// Function to handle saving size for ports using the slider
 function saveSize(cellId) {
   try {
     const portTypeSelect = document.getElementById(`${cellId}-port-type`);
-    const inputSize = document.getElementById(`${cellId}-size-input`);
+    const selectedPortType = portTypeSelect ? portTypeSelect.value : null;
+    const inputSize = document.getElementById(`${cellId}-size-slider`);
     let newSize = parseFloat(inputSize.value.trim());
-
-    if (isNaN(newSize)) {
-      newSize = 1.3;
-    }
-
-    if (newSize < 1.3 || newSize > 8) {
-      alert("Please enter value between 1.3 to 8");
-      newSize = 1.3;
-    }
+    currentSize = newSize;
 
     // Update the size in the DOM display
     const sizeDisplay = document.getElementById(`${cellId}-size-display`);
-    try {
-      if (sizeDisplay) sizeDisplay.innerHTML = `${newSize}`;
-    } catch (error) {}
+    const sizeSliderValue = document.getElementById(
+      `${cellId}-size-slider-value`
+    );
+    if (sizeDisplay) sizeDisplay.innerHTML = `${newSize}`;
+    if (sizeSliderValue) sizeSliderValue.innerHTML = `${newSize}`; // Update the slider display value
 
     // Update the size in the cell model
     const cell = graph.getCell(cellId);
-    if (cell) {
-      const elements = graph.getElements();
-
+    if (cell && selectedPortType) {
       let group = cell.get("ports");
-      if (portTypeSelect.value === "out") {
-        group.groups.out.attrs.portBody.r = newSize;
-      } else if (portTypeSelect.value === "in") {
-        group.groups.in.attrs.portBody.r = newSize;
+
+      // Update the port size attribute for the selected port type dynamically
+      if (group.groups[selectedPortType]) {
+        group.groups[selectedPortType].attrs.portBody.r = newSize;
       }
 
-      // Trigger a change event to update the size in the graph
+      // Update the graph with the new port size without removing/re-adding the cell
       cell.trigger("change:ports", cell);
-      elements.forEach((element) => {
-        element.remove({ disconnectLinks: false });
-        graph.addCell(element);
-      });
+      cell.remove({ disconnectLinks: false });
+      graph.addCell(cell);
+      if (cell.attributes.power === 0) {
+        addPanel(cell.attributes.type, cell);
+      }
     }
   } catch (error) {
     console.error("Error updating Size:", error);
   }
 }
 
-// Function to handle pressing Enter to save the name
-function handleEnter(event, cellId, type) {
-  if (event.key === "Enter") {
-    switch (type) {
-      case "position-x":
-        savePositionX(cellId);
-        break;
-      case "position-y":
-        savePositionY(cellId);
-        break;
-      case "size":
-        saveSize(cellId);
-        break;
-      case "waterLevel":
-        saveWaterLevel(cellId);
-        break;
-      case "name":
-        saveName(cellId);
-        break;
-      case "location":
-        saveLocation(cellId);
-        break;
-      case "level":
-        saveLevel(cellId);
-        break;
-      default:
-        console.log("Invalid type");
-    }
+// Function to update the slider values based on the selected port type
+function updatePortValues(cellId) {
+  const portTypeSelect = document.getElementById(`${cellId}-port-type`);
+  const selectedPortType = portTypeSelect ? portTypeSelect.value : null;
+
+  const cell = graph.getCell(cellId);
+  if (cell && selectedPortType) {
+    const group = cell.get("ports").groups[selectedPortType];
+
+    // Get initial values for position and size for the selected port
+    const positionX = group?.position?.args?.x || 0;
+    const positionY = group?.position?.args?.y || 0;
+    const size = group?.attrs?.portBody?.r || 1.3;
+    console.log(positionX, positionY);
+
+    // Update the sliders and their display values
+    document.getElementById(`${cellId}-position-x-slider`).value = positionX;
+    document.getElementById(`${cellId}-position-y-slider`).value = positionY;
+    document.getElementById(`${cellId}-size-slider`).value = size;
   }
 }
 
@@ -709,4 +680,29 @@ setLevelPanel = (cell, level) => {
 //graph level cbm
 updateWaterLevel = (cell, level) => {
   cell.attr("graphlevel/text", `${parseFloat(level)} cbm`);
+};
+
+//add Panel if JSON save
+addPanel = (type, cell) => {
+  if (type === "LiquidTank") {
+    const panel = new Panel();
+    panel.position(cell.position().x + 10, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "BoosterPumpHouse") {
+    const panel = new Panel();
+    panel.position(cell.position().x + 5, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "squareTank") {
+    const panel = new Panel();
+    panel.position(cell.position().x + 10, cell.position().y + 20);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "ConicTank") {
+    const panel = new Panel();
+    panel.position(cell.position().x + 5, cell.position().y + 10);
+    panel.addTo(graph);
+    cell.embed(panel);
+  }
 };

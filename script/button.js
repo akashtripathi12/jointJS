@@ -155,7 +155,7 @@ graph.on("add", function () {
 function addControlsFromJSON(graphData) {
   graphData.cells.forEach((cellData) => {
     const cell = graph.getCell(cellData.id);
-
+    cell.markup = cellData.markup;
     if (!cell || !cell.attributes.attrs.controls) return;
 
     const controlType = cell.attributes.attrs.controls.type;
@@ -188,16 +188,48 @@ function addControlsFromJSON(graphData) {
   });
 }
 
+// Save the current graph state to localStorage
 const savejson = () => {
   try {
-    // Convert the current graph state to JSON
+    // Check if there are any elements in the graph before saving
     const graphJson = JSON.stringify(graph.toJSON());
+    if (graph.getElements().length === 0) {
+      localStorage.setItem("GraphJson", graphJson);
+      return;
+    }
 
     // Save JSON to localStorage
     localStorage.setItem("GraphJson", graphJson);
-    //console.log("Graph saved to local storage.");
-  } catch (error) {
-    //console.error("Error during save:", error);
+  } catch (error) {}
+};
+
+// Restore the graph state from localStorage
+window.onbeforeunload = () => {
+  localStorage.setItem("isReload", true);
+};
+
+window.onload = () => {
+  if (localStorage.getItem("isReload") === "true") {
+    localStorage.removeItem("isReload"); // Remove the flag
+    const savedGraphJson = localStorage.getItem("GraphJson");
+    if (savedGraphJson) {
+      try {
+        const graphData = JSON.parse(savedGraphJson);
+        if (graphData.cells.length > 0) {
+          // Check if there are any elements to load
+          try {
+            graph.fromJSON(graphData);
+            addControlsFromJSON(graphData);
+            graphData.cells.forEach((cell) => {
+              undoStack.push(cell);
+              if (cell.type != "Pipe" || cell.type != "Panel") {
+                append3rd(cell);
+              }
+            });
+          } catch (error) {}
+        }
+      } catch (error) {}
+    }
   }
 };
 
@@ -205,9 +237,8 @@ const savejson = () => {
 const cleargraph = async () => {
   try {
     graph.clear(); // Clear the graph contents
-    graph_undo_redo = []; // Clear undo/redo stack
-    graphsteps = []; // Clear any graph steps or history
-    console.log("Graph cleared.");
+    redoStack = []; // Clear undo/redo stack
+    undoStack = []; // Clear any graph steps or history
 
     // Clear any relevant DOM elements
     let panel = document.getElementById("paper2li");
