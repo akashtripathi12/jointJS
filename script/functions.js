@@ -198,6 +198,19 @@ const append3rd = (cell) => {
           onmousemove="saveSize('${element.id}', this.value)" 
           />
       </div>
+    </li>
+     <li class="UL">
+      <div class="edit-container">
+        <span class="display">Panel Size:</span>
+        <input id="${element.id}-panel-slider" 
+          type="range"
+          min="1"
+          max="5"
+          step="1"
+          value="5" 
+          oninput="savePanelSize('${element.id}', this.value)" 
+          />
+      </div>
     </li>`;
   }
 
@@ -224,29 +237,6 @@ const append3rd = (cell) => {
   ) {
     $(`#${element.id}-location-display`).on("click", function () {
       editLocation(element.id);
-    });
-  }
-
-  //Attach event listeners for port adjustment location editing
-  if (
-    element.type === "LiquidTank" ||
-    element.type === "squareTank" ||
-    element.type === "BoosterPumpHouse" ||
-    element.type === "ConicTank"
-  ) {
-    // Attach event listeners for editing Position-X
-    $(`#${element.id}-position-x-display`).on("click", function () {
-      editPositionX(element.id);
-    });
-
-    // Attach event listeners for editing Position-Y
-    $(`#${element.id}-position-y-display`).on("click", function () {
-      editPositionY(element.id);
-    });
-
-    // Attach event listeners for editing Size
-    $(`#${element.id}-size-display`).on("click", function () {
-      editSize(element.id); // Open edit mode for Size
     });
   }
 
@@ -315,8 +305,10 @@ function editWaterLevel(cellId) {
 // Function to handle saving waterLevel
 function saveWaterLevel(cellId) {
   try {
+    const inputSize = document.getElementById(`${cellId}-panel-slider`);
     const input = document.getElementById(`${cellId}-waterLevel-input`);
     let newWaterLevel = input.value.trim();
+    const panelSize = parseFloat(inputSize.value.trim());
 
     if (newWaterLevel === "") {
       newWaterLevel = 0;
@@ -337,7 +329,17 @@ function saveWaterLevel(cellId) {
     const cell = graph.getCell(cellId);
     if (cell) {
       // Get the current text value of the water level
-      setLevel(cell, (newWaterLevel / 5) * 100);
+      if (panelSize === 1) {
+        setLevel(cell, (newWaterLevel / 5) * 100, 39, 45);
+      } else if (panelSize === 2) {
+        setLevel(cell, (newWaterLevel / 5) * 100, 49, 55);
+      } else if (panelSize === 3) {
+        setLevel(cell, (newWaterLevel / 5) * 100, 59, 65);
+      } else if (panelSize === 4) {
+        setLevel(cell, (newWaterLevel / 5) * 100, 69, 75);
+      } else if (panelSize === 5) {
+        setLevel(cell, (newWaterLevel / 5) * 100, 79, 85);
+      }
 
       // Update only the numeric part of the waterlevel text attribute
       cell.attr("waterlevel/text", newWaterLevel);
@@ -461,6 +463,15 @@ function savePositionX(cellId) {
     const inputX = document.getElementById(`${cellId}-position-x-slider`);
     let newPositionX = parseFloat(inputX.value.trim());
 
+    // Validate the new position-X value
+    if (isNaN(newPositionX)) {
+      newPositionX = 0;
+    }
+    if (newPositionX > 180 || newPositionX < 0) {
+      alert("Please input a value between 0 and 180");
+      newPositionX = 0;
+    }
+
     // Update the position-X in the cell model based on the selected port type
     const cell = graph.getCell(cellId);
     if (cell && selectedPortType) {
@@ -471,13 +482,23 @@ function savePositionX(cellId) {
         group.groups[selectedPortType].position.args.x = newPositionX;
       }
 
-      // Update the graph with the new position-X without removing/re-adding the cell
-      cell.set("ports", group); // Update the port group directly
-      cell.trigger("change:ports", cell);
-      cell.remove({ disconnectLinks: false });
-      graph.addCell(cell);
-      if (cell.attributes.power === 0) {
-        addPanel(cell.attributes.type, cell);
+      // // Update the graph with the new position-Y without removing/re-adding the cell
+      // cell.set("ports", group); // Update the port group directly
+      // cell.trigger("change:ports", cell); // Trigger the change event
+      // cell.remove({ disconnectLinks: false });
+      // graph.addCell(cell);
+      // if (cell.attributes.power === 0) {
+      //   addPanel(cell.attributes.type, cell);
+      // }
+
+      // Use cell.prop() or cell.set() to trigger change events
+      cell.prop("ports", group); // This will trigger a change:ports event and update the port group directly
+      cell.trigger("change:ports", { property: "ports" });
+
+      // Optionally, update the view using the paper instance if available
+      const cellView = paper.findViewByModel(cell);
+      if (cellView) {
+        cellView.update();
       }
     }
   } catch (error) {
@@ -504,13 +525,22 @@ function savePositionY(cellId) {
         group.groups[selectedPortType].position.args.y = newPositionY;
       }
 
-      // Update the graph with the new position-Y without removing/re-adding the cell
-      cell.set("ports", group); // Update the port group directly
-      cell.trigger("change:ports", cell); // Trigger the change event
-      cell.remove({ disconnectLinks: false });
-      graph.addCell(cell);
-      if (cell.attributes.power === 0) {
-        addPanel(cell.attributes.type, cell);
+      // // Update the graph with the new position-Y without removing/re-adding the cell
+      // cell.set("ports", group); // Update the port group directly
+      // cell.trigger("change:ports", cell); // Trigger the change event
+      // cell.remove({ disconnectLinks: false });
+      // graph.addCell(cell);
+      // if (cell.attributes.power === 0) {
+      //   addPanel(cell.attributes.type, cell);
+      // }
+      // Use cell.prop() or cell.set() to trigger change events
+      cell.prop("ports", group); // This will trigger a change:ports event and update the port group directly
+      cell.trigger("change:ports", { property: "ports" });
+
+      // Optionally, update the view using the paper instance if available
+      const cellView = paper.findViewByModel(cell);
+      if (cellView) {
+        cellView.update();
       }
     }
   } catch (error) {
@@ -528,14 +558,6 @@ function saveSize(cellId) {
     let newSize = parseFloat(inputSize.value.trim());
     currentSize = newSize;
 
-    // Update the size in the DOM display
-    const sizeDisplay = document.getElementById(`${cellId}-size-display`);
-    const sizeSliderValue = document.getElementById(
-      `${cellId}-size-slider-value`
-    );
-    if (sizeDisplay) sizeDisplay.innerHTML = `${newSize}`;
-    if (sizeSliderValue) sizeSliderValue.innerHTML = `${newSize}`; // Update the slider display value
-
     // Update the size in the cell model
     const cell = graph.getCell(cellId);
     if (cell && selectedPortType) {
@@ -546,12 +568,21 @@ function saveSize(cellId) {
         group.groups[selectedPortType].attrs.portBody.r = newSize;
       }
 
-      // Update the graph with the new port size without removing/re-adding the cell
-      cell.trigger("change:ports", cell);
-      cell.remove({ disconnectLinks: false });
-      graph.addCell(cell);
-      if (cell.attributes.power === 0) {
-        addPanel(cell.attributes.type, cell);
+      // // Update the graph with the new port size without removing/re-adding the cell
+      // cell.trigger("change:ports", cell);
+      // cell.remove({ disconnectLinks: false });
+      // graph.addCell(cell);
+      // if (cell.attributes.power === 0) {
+      //   addPanel(cell.attributes.type, cell);
+      // }
+
+      cell.prop("ports", group); // This will trigger a change:ports event and update the port group directly
+      cell.trigger("change:ports", { property: "ports" });
+
+      // Optionally, update the view using the paper instance if available
+      const cellView = paper.findViewByModel(cell);
+      if (cellView) {
+        cellView.update();
       }
     }
   } catch (error) {
@@ -579,6 +610,120 @@ function updatePortValues(cellId) {
     document.getElementById(`${cellId}-position-y-slider`).value = positionY;
     document.getElementById(`${cellId}-size-slider`).value = size;
   }
+}
+
+// Function to handle saving size of the panel using the slider
+function savePanelSize(cellId) {
+  const inputSize = document.getElementById(`${cellId}-panel-slider`);
+  let newSize = parseFloat(inputSize.value.trim());
+
+  const cell = graph.getCell(cellId);
+  const panel = graph.getCell(cell.attributes.embeds[0]);
+  let width, height;
+  if (panel) {
+    if (newSize === 1) {
+      width = 50;
+      height = 50;
+    }
+    if (newSize === 2) {
+      width = 55;
+      height = 60;
+    }
+    if (newSize === 3) {
+      width = 50;
+      height = 70;
+    }
+    if (newSize === 4) {
+      width = 60;
+      height = 80;
+    }
+    if (newSize === 5) {
+      width = 70;
+      height = 90;
+    }
+    panel.remove({ disconnectLinks: false });
+
+    if (cell.attributes.power === 0) {
+      addPanelwithSize(cell.attributes.type, cell, width, height);
+    } else {
+      addPanelwithSize(cell.attributes.type, cell, width, height);
+    }
+  }
+}
+// function savePanelSize(cellId) {
+//   try {
+//     // Get the slider input element and new size value
+//     const inputSize = document.getElementById(`${cellId}-panel-slider`);
+//     let newSize = parseFloat(inputSize.value.trim());
+
+//     // Validate the size value
+//     if (isNaN(newSize)) {
+//       newSize = 1; // Default to 1 if input is invalid
+//     }
+
+//     // Get the parent cell and its embedded panel
+//     const cell = graph.getCell(cellId);
+//     const panel =
+//       cell && cell.get("embeds") ? graph.getCell(cell.get("embeds")[0]) : null;
+
+//     if (panel) {
+//       // Define width and height based on the slider value
+//       let width, height;
+//       switch (newSize) {
+//         case 1:
+//           width = 50;
+//           height = 50;
+//           break;
+//         case 2:
+//           width = 55;
+//           height = 60;
+//           break;
+//         case 3:
+//           width = 50;
+//           height = 70;
+//           break;
+//         case 4:
+//           width = 60;
+//           height = 80;
+//           break;
+//         case 5:
+//           width = 70;
+//           height = 90;
+//           break;
+//         default:
+//           width = panel.attributes.size.width;
+//           height = panel.attributes.size.height;
+//       }
+
+//       // Update the size of the panel directly without removing and re-adding
+//       panel.resize(width, height);
+
+//       // Update any attributes based on new width and height if necessary
+//       updatePanelAttributes(panel, width, height);
+
+//       // Trigger change event for the updated panel size
+//       panel.trigger("change:size", panel);
+
+//       console.log(
+//         `Panel ${panel.id} resized to width: ${width}, height: ${height}`
+//       );
+//     }
+//   } catch (error) {
+//     console.error("Error updating panel size:", error);
+//   }
+// }
+
+// Helper function to update the attributes of the panel based on its size
+function updatePanelAttributes(panel, width, height) {
+  // Example: Update attributes like text or other properties based on new width/height
+  panel.attr({
+    panelBody: { width, height },
+    frame: { width: width - 10, height: height - 10 }, // Adjust frame size relative to the new dimensions
+    glass: { width: width - 10, height: height - 10 }, // Adjust glass size similarly
+  });
+
+  // Update other dynamic properties based on new width and height as needed
+  panel.trigger("change:attrs", panel); // Trigger attributes change event
 }
 
 var elementvisible = (ID) => {
@@ -644,15 +789,20 @@ updateFlowRate = (cell, value, unit = "m³/h") => {
   }
 };
 
-//LEVEL
-setLevel = (cell, level) => {
+//graph level cbm
+updateWaterLevel = (cell, level) => {
+  cell.attr("graphlevel/text", `${parseFloat(level)} cbm`);
+};
+
+// Unified function to set the level of the cell and its embedded panel
+setLevel = (cell, level, heightFactor, yOffset) => {
   const newLevel = Math.max(0, Math.min(100, level)); // Clamp level between 0 and 100
   cell.set("level", newLevel);
 
-  // Calculate the height for the liquid fill based on the level
-  const levelHeight = (newLevel / 100) * 90; // Assume full height of indicator is 90px
+  // Calculate the height for the liquid fill based on the level and provided height factor
+  const levelHeight = (newLevel / 100) * heightFactor;
   cell.attr("liquid/height", levelHeight);
-  cell.attr("liquid/y", 85 - levelHeight); // Adjust y to move the liquid up
+  cell.attr("liquid/y", yOffset - levelHeight); // Adjust y to move the liquid up
 
   // Update the waterLevel text to display the current water level in meters
   const waterLevelMeters = (newLevel / 20).toPrecision(4); // Assume 5 meters corresponds to 100%
@@ -661,28 +811,133 @@ setLevel = (cell, level) => {
   // Update the panel if it's embedded
   const embeddedPanel = cell.getEmbeddedCells();
 
-  if (embeddedPanel) {
-    setLevelPanel(embeddedPanel[0], newLevel); // Update the panel's level
+  if (embeddedPanel && embeddedPanel.length > 0) {
+    setPanelLevel(embeddedPanel[0], newLevel, heightFactor, yOffset); // Update the panel's level
   }
 };
 
-//level for panel
-setLevelPanel = (cell, level) => {
+// Function to update the level of the embedded panel
+setPanelLevel = (cell, level, heightFactor, yOffset) => {
   const newLevel = Math.max(0, Math.min(100, level)); // Clamp level between 0 and 100
   cell.set("level", newLevel);
 
   // Update the liquid height based on the new level
-  const liquidHeight = (newLevel / 100) * 80;
+  const liquidHeight = (newLevel / 100) * heightFactor;
   cell.attr("liquid/height", liquidHeight);
-  cell.attr("liquid/y", 85 - liquidHeight);
+  cell.attr("liquid/y", yOffset - liquidHeight);
 };
 
-//graph level cbm
-updateWaterLevel = (cell, level) => {
-  cell.attr("graphlevel/text", `${parseFloat(level)} cbm`);
+addPanelwithSize = (type, cell, width, height) => {
+  if (width === 50 && height === 50) {
+    addPanel1(type, cell);
+  } else if (width === 55 && height === 60) {
+    addPanel2(type, cell);
+  } else if (width === 50 && height === 70) {
+    addPanel3(type, cell);
+  } else if (width === 60 && height === 80) {
+    addPanel4(type, cell);
+  } else if (width === 70 && height === 90) {
+    addPanel(type, cell);
+  }
 };
 
 //add Panel if JSON save
+addPanel1 = (type, cell) => {
+  if (type === "LiquidTank") {
+    const panel = new Panel1();
+    panel.position(cell.position().x + 10, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "BoosterPumpHouse") {
+    const panel = new Panel1();
+    panel.position(cell.position().x + 5, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "squareTank") {
+    const panel = new Panel1();
+    panel.position(cell.position().x + 10, cell.position().y + 20);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "ConicTank") {
+    const panel = new Panel1();
+    panel.position(cell.position().x + 5, cell.position().y + 10);
+    panel.addTo(graph);
+    cell.embed(panel);
+  }
+};
+
+addPanel2 = (type, cell) => {
+  if (type === "LiquidTank") {
+    const panel = new Panel2();
+    panel.position(cell.position().x + 10, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "BoosterPumpHouse") {
+    const panel = new Panel2();
+    panel.position(cell.position().x + 5, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "squareTank") {
+    const panel = new Panel2();
+    panel.position(cell.position().x + 10, cell.position().y + 20);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "ConicTank") {
+    const panel = new Panel2();
+    panel.position(cell.position().x + 5, cell.position().y + 10);
+    panel.addTo(graph);
+    cell.embed(panel);
+  }
+};
+
+addPanel3 = (type, cell) => {
+  if (type === "LiquidTank") {
+    const panel = new Panel3();
+    panel.position(cell.position().x + 10, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "BoosterPumpHouse") {
+    const panel = new Panel3();
+    panel.position(cell.position().x + 5, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "squareTank") {
+    const panel = new Panel3();
+    panel.position(cell.position().x + 10, cell.position().y + 20);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "ConicTank") {
+    const panel = new Panel3();
+    panel.position(cell.position().x + 5, cell.position().y + 10);
+    panel.addTo(graph);
+    cell.embed(panel);
+  }
+};
+
+addPanel4 = (type, cell) => {
+  if (type === "LiquidTank") {
+    const panel = new Panel4();
+    panel.position(cell.position().x + 10, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "BoosterPumpHouse") {
+    const panel = new Panel4();
+    panel.position(cell.position().x + 5, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "squareTank") {
+    const panel = new Panel4();
+    panel.position(cell.position().x + 10, cell.position().y + 20);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (type === "ConicTank") {
+    const panel = new Panel4();
+    panel.position(cell.position().x + 5, cell.position().y + 10);
+    panel.addTo(graph);
+    cell.embed(panel);
+  }
+};
+
 addPanel = (type, cell) => {
   if (type === "LiquidTank") {
     const panel = new Panel();

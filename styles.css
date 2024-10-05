@@ -560,7 +560,8 @@ input:focus {
 
 [id$="-position-x-slider"],
 [id$="-position-y-slider"],
-[id$="-size-slider"] {
+[id$="-size-slider"],
+[id$="-panel-slider"] {
   width: 120px;
   margin-top: 10px;
   margin-left: 30px;
@@ -604,7 +605,8 @@ input[type="number"] {
   }
   [id$="-position-x-slider"],
   [id$="-position-y-slider"],
-  [id$="-size-slider"] {
+  [id$="-size-slider"],
+  [id$="-panel-slider"] {
     width: 100px;
     margin-top: 10px;
     margin-left: 30px;

@@ -121,7 +121,6 @@ graph.on("add", (cell) => {
     panel.position(cell.position().x + 10, cell.position().y + 20);
     panel.addTo(graph);
     cell.embed(panel);
-    panel.attr({ z: -1 }); // set z-index of panel to -1
   } else if (cell instanceof ConicTank) {
     const panel = new Panel();
     panel.position(cell.position().x + 5, cell.position().y + 10);

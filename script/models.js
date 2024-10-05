@@ -128,6 +128,10 @@ const r = 30;
 const d = 10;
 const l = (3 * r) / 4;
 const step = 16;
+const step4 = 14;
+const step3 = 12;
+const step2 = 10;
+const step1 = 8;
 
 //-----------------------------------SquareTank Model--------------------------------------
 class squareTank extends dia.Element {
@@ -1343,7 +1347,7 @@ class ControlValve extends dia.Element {
   }
 }
 
-//-----------------------------------Panel Model--------------------------------------
+//-----------------------------------Panel Model----------------------------------------
 class Panel extends dia.Element {
   defaults() {
     return {
@@ -1422,15 +1426,397 @@ class Panel extends dia.Element {
           stroke: "none",
           fillOpacity: 0.1,
         },
-        label: {
+        panel: {
           text: "Panel",
+          href: "./Images/Elements/Panel.png",
+        },
+      },
+    };
+  }
+
+  preinitialize() {
+    this.markup = util.svg/* xml */ `
+            <rect @selector="panelBody"/>
+            <path @selector="panelTicks"/>
+            <text @selector="panelValues" />
+            <rect @selector="glass"/>
+            <rect @selector="liquid"/>
+            <rect @selector="frame"/>
+      `;
+  }
+}
+
+class Panel4 extends dia.Element {
+  defaults() {
+    return {
+      ...super.defaults,
+      type: "Panel",
+      size: {
+        width: 60,
+        height: 80,
+      },
+      level: 0,
+      attrs: {
+        root: {
+          magnetSelector: "panelBody",
+        },
+        panelBody: {
+          z: 0,
+          x: 0,
+          y: 0,
+          width: "calc(w)",
+          height: "calc(h)",
+          rx: 1,
+          ry: 1,
+          fill: "lightgray",
+        },
+        panelTicks: {
+          transform: "translate(47, 6)",
+          d: `M 0 0 h 8 M 0 ${step4} h 8 M 0 ${step4 * 2} h 8 M 0 ${
+            step4 * 3
+          } h 8 M 0 ${step4 * 4} h 8 M 0 ${step4 * 5} h 8 M 0 ${step4 * 6}`,
+          fill: "none",
+          stroke: "black",
+          strokeWidth: 2,
+          strokeLinecap: "round",
+        },
+        panelValues: {
+          text: "5\n4\n3\n2\n1\n0",
           textAnchor: "middle",
           textVerticalAnchor: "top",
-          x: "calc(w / 2)",
-          y: "calc(h + 10)",
-          fontSize: 20,
+          x: 60,
+          y: 0,
+          lineHeight: step4,
+          fontSize: 9,
           fontFamily: "sans-serif",
-          fill: "#350100",
+        },
+        frame: {
+          x: 5,
+          y: 6,
+          width: 40,
+          height: 70,
+          rx: 1,
+          ry: 1,
+          fill: "none",
+          stroke: "black",
+          strokeWidth: 2,
+        },
+        liquid: {
+          y: 6,
+          x: 5,
+          rx: 1,
+          ry: 1,
+          width: 40,
+          height: 0,
+          stroke: "black",
+          strokeWidth: 2,
+          strokeOpacity: 0.2,
+          fill: MIN_LIQUID_COLOR,
+        },
+        glass: {
+          y: 6,
+          width: 40,
+          height: 70,
+          rx: 1,
+          x: 5,
+          ry: 1,
+          fill: "blue",
+          stroke: "none",
+          fillOpacity: 0.1,
+        },
+        panel: {
+          text: "Panel",
+          href: "./Images/Elements/Panel.png",
+        },
+      },
+    };
+  }
+
+  preinitialize() {
+    this.markup = util.svg/* xml */ `
+            <rect @selector="panelBody"/>
+            <path @selector="panelTicks"/>
+            <text @selector="panelValues" />
+            <rect @selector="glass"/>
+            <rect @selector="liquid"/>
+            <rect @selector="frame"/>
+      `;
+  }
+}
+
+class Panel3 extends dia.Element {
+  defaults() {
+    return {
+      ...super.defaults,
+      type: "Panel",
+      size: {
+        width: 50,
+        height: 70,
+      },
+      level: 0,
+      attrs: {
+        root: {
+          magnetSelector: "panelBody",
+        },
+        panelBody: {
+          z: 0,
+          x: 0,
+          y: 0,
+          width: "calc(w)",
+          height: "calc(h)",
+          rx: 1,
+          ry: 1,
+          fill: "lightgray",
+        },
+        panelTicks: {
+          transform: "translate(47, 6)",
+          d: `M 0 0 h 8 M 0 ${step3} h 8 M 0 ${step3 * 2} h 8 M 0 ${
+            step3 * 3
+          } h 8 M 0 ${step3 * 4} h 8 M 0 ${step3 * 5} h 8 M 0 ${step3 * 6}`,
+          fill: "none",
+          stroke: "black",
+          strokeWidth: 2,
+          strokeLinecap: "round",
+        },
+        panelValues: {
+          text: "5\n4\n3\n2\n1\n0",
+          textAnchor: "middle",
+          textVerticalAnchor: "top",
+          x: 60,
+          y: 2,
+          lineHeight: step3,
+          fontSize: 9,
+          fontFamily: "sans-serif",
+        },
+        frame: {
+          x: 5,
+          y: 6,
+          width: 40,
+          height: 60,
+          rx: 1,
+          ry: 1,
+          fill: "none",
+          stroke: "black",
+          strokeWidth: 2,
+        },
+        liquid: {
+          y: 6,
+          x: 5,
+          rx: 1,
+          ry: 1,
+          width: 40,
+          height: 0,
+          stroke: "black",
+          strokeWidth: 2,
+          strokeOpacity: 0.2,
+          fill: MIN_LIQUID_COLOR,
+        },
+        glass: {
+          y: 6,
+          width: 40,
+          height: 60,
+          rx: 1,
+          x: 5,
+          ry: 1,
+          fill: "blue",
+          stroke: "none",
+          fillOpacity: 0.1,
+        },
+        panel: {
+          text: "Panel",
+          href: "./Images/Elements/Panel.png",
+        },
+      },
+    };
+  }
+
+  preinitialize() {
+    this.markup = util.svg/* xml */ `
+            <rect @selector="panelBody"/>
+            <path @selector="panelTicks"/>
+            <text @selector="panelValues" />
+            <rect @selector="glass"/>
+            <rect @selector="liquid"/>
+            <rect @selector="frame"/>
+      `;
+  }
+}
+
+class Panel2 extends dia.Element {
+  defaults() {
+    return {
+      ...super.defaults,
+      type: "Panel",
+      size: {
+        width: 55,
+        height: 60,
+      },
+      level: 0,
+      attrs: {
+        root: {
+          magnetSelector: "panelBody",
+        },
+        panelBody: {
+          z: 0,
+          x: 0,
+          y: 0,
+          width: "calc(w)",
+          height: "calc(h)",
+          rx: 1,
+          ry: 1,
+          fill: "lightgray",
+        },
+        panelTicks: {
+          transform: "translate(37, 6)",
+          d: `M 0 0 h 8 M 0 ${step2} h 8 M 0 ${step2 * 2} h 8 M 0 ${
+            step2 * 3
+          } h 8 M 0 ${step2 * 4} h 8 M 0 ${step2 * 5} h 8 M 0 ${step2 * 6}`,
+          fill: "none",
+          stroke: "black",
+          strokeWidth: 2,
+          strokeLinecap: "round",
+        },
+        panelValues: {
+          text: "5\n4\n3\n2\n1\n0",
+          textAnchor: "middle",
+          textVerticalAnchor: "top",
+          x: 50,
+          y: 3,
+          lineHeight: step2,
+          fontSize: 8,
+          fontFamily: "sans-serif",
+        },
+        frame: {
+          x: 5,
+          y: 6,
+          width: 30,
+          height: 50,
+          rx: 1,
+          ry: 1,
+          fill: "none",
+          stroke: "black",
+          strokeWidth: 2,
+        },
+        liquid: {
+          y: 6,
+          x: 5,
+          rx: 1,
+          ry: 1,
+          width: 30,
+          height: 0,
+          stroke: "black",
+          strokeWidth: 2,
+          strokeOpacity: 0.2,
+          fill: MIN_LIQUID_COLOR,
+        },
+        glass: {
+          y: 6,
+          width: 30,
+          height: 50,
+          rx: 1,
+          x: 5,
+          ry: 1,
+          fill: "blue",
+          stroke: "none",
+          fillOpacity: 0.1,
+        },
+        panel: {
+          text: "Panel",
+          href: "./Images/Elements/Panel.png",
+        },
+      },
+    };
+  }
+
+  preinitialize() {
+    this.markup = util.svg/* xml */ `
+            <rect @selector="panelBody"/>
+            <path @selector="panelTicks"/>
+            <text @selector="panelValues" />
+            <rect @selector="glass"/>
+            <rect @selector="liquid"/>
+            <rect @selector="frame"/>
+      `;
+  }
+}
+
+class Panel1 extends dia.Element {
+  defaults() {
+    return {
+      ...super.defaults,
+      type: "Panel",
+      size: {
+        width: 50,
+        height: 50,
+      },
+      level: 0,
+      attrs: {
+        root: {
+          magnetSelector: "panelBody",
+        },
+        panelBody: {
+          z: 0,
+          x: 0,
+          y: 0,
+          width: "calc(w)",
+          height: "calc(h)",
+          rx: 1,
+          ry: 1,
+          fill: "lightgray",
+        },
+        panelTicks: {
+          transform: "translate(27, 6)",
+          d: `M 0 0 h 8 M 0 ${step1} h 8 M 0 ${step1 * 2} h 8 M 0 ${
+            step1 * 3
+          } h 8 M 0 ${step1 * 4} h 8 M 0 ${step1 * 5} h 8 M 0 ${step1 * 6}`,
+          fill: "none",
+          stroke: "black",
+          strokeWidth: 1.5,
+          strokeLinecap: "round",
+        },
+        panelValues: {
+          text: "5\n4\n3\n2\n1\n0",
+          textAnchor: "middle",
+          textVerticalAnchor: "top",
+          x: 40,
+          y: 2,
+          lineHeight: step1,
+          fontSize: 7,
+          fontFamily: "sans-serif",
+        },
+        frame: {
+          x: 2,
+          y: 6,
+          width: 25,
+          height: 40,
+          rx: 1,
+          ry: 1,
+          fill: "none",
+          stroke: "black",
+          strokeWidth: 2,
+        },
+        liquid: {
+          y: 6,
+          x: 2,
+          rx: 1,
+          ry: 1,
+          width: 25,
+          height: 0,
+          stroke: "black",
+          strokeWidth: 2,
+          strokeOpacity: 0.2,
+          fill: MIN_LIQUID_COLOR,
+        },
+        glass: {
+          y: 6,
+          width: 25,
+          height: 40,
+          rx: 1,
+          x: 2,
+          ry: 1,
+          fill: "blue",
+          stroke: "none",
+          fillOpacity: 0.1,
         },
         panel: {
           text: "Panel",
