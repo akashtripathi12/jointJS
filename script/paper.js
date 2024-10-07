@@ -380,8 +380,8 @@ var paper = new joint.dia.Paper({
   gridSize: 1,
   model: graph,
   cellViewNamespace: namespace,
-  linkPinning: false, // Prevent link being dropped in blank paper area
-  defaultLink: new Pipe(), // Set Pipe as the default link
+  linkPinning: false,
+  defaultLink: new Pipe(),
   interactive: {
     linkMove: true,
     stopDelegation: false,
@@ -421,18 +421,10 @@ var paper = new joint.dia.Paper({
 graph.on("add", function () {
   addControls(paper);
 });
-// Transform the paper so that the content fits the viewport
-paper.transformToFitContent({
-  useModelGeometry: true,
-  padding: { top: 80, bottom: 10, horizontal: 50 },
-  horizontalAlign: "middle",
-  verticalAlign: "top",
-});
 
 function addControls(paper) {
   const graph = paper.model;
   graph.getElements().forEach((cell) => {
-    //console.log(cell.findView(paper));
     switch (cell.get("type")) {
       case "ControlValve":
         SliderValveControl.add(cell.findView(paper), "root", "slider", {
@@ -448,6 +440,22 @@ function addControls(paper) {
     }
   });
 }
+
+// Transform the paper so that the content fits the viewport
+paper.transformToFitContent({
+  useModelGeometry: true,
+  padding: { top: 80, bottom: 10, horizontal: 50 },
+  horizontalAlign: "middle",
+  verticalAlign: "top",
+});
+
+// Add the double-click event listener to remove links
+paper.on("link:pointerdblclick", function (linkView) {
+  const link = linkView.model;
+  if (link instanceof Pipe) {
+    link.remove({ disconnectLinks: false });
+  }
+});
 
 let Scale = 2.2;
 var mouseDownFlag = false;
@@ -512,22 +520,14 @@ $("#container").mousemove(async function (event) {
 var removeButton = new joint.elementTools.Remove({
   focusOpacity: 0.5,
   action: function (evt, elementView, toolView) {
-    // Get the element that is being removed
     const removedElement = elementView.model;
-
-    // Save the remove action in the undo stack before removing the element (if needed)
-    // saveAction("remove", removedElement);
-
-    // Remove the element from the graph
     removedElement.remove({ ui: true, tool: toolView.cid });
 
-    // Remove the associated main DOM element by ID
     const mainElement = document.getElementById(removedElement.id);
     if (mainElement) {
       mainElement.remove();
     }
 
-    // Reset visibility for the list items (customize this as per your UI needs)
     $("#paper2li")
       .children("LI")
       .each(function () {
@@ -537,7 +537,6 @@ var removeButton = new joint.elementTools.Remove({
         });
       });
 
-    // Clear the redo stack after the action
     redoStack = [];
 
     console.log("Remove action saved in undo stack.");

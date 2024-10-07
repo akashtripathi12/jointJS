@@ -17,16 +17,13 @@ paper.el.addEventListener("dragover", (event) => {
 paper.el.addEventListener("drop", (event) => {
   event.preventDefault();
 
-  // Get the element type from the sidebar
   const type = event.dataTransfer.getData("text/plain");
 
-  // Convert the position relative to the paper container to the position relative to the paper
   const dropPosition = paper.clientToLocalPoint({
     x: event.clientX,
     y: event.clientY,
   });
 
-  // Add the corresponding JointJS element to the graph
   addElementToGraph(type, dropPosition);
 });
 
@@ -64,11 +61,6 @@ function addElementToGraph(type, position) {
       element = new Zone();
       element.position(position.x, position.y);
       break;
-
-    // case "Panel":
-    //   element = new Panel();
-    //   element.position(position.x, position.y);
-    //   break;
 
     case "Join":
       element = new Join();

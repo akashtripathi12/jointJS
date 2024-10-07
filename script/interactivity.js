@@ -2,17 +2,20 @@
 var previousCellView = null;
 paper.on("element:pointerdown", function (elementView, evt, x, y) {
   elementvisible(elementView.model.id);
-  elementView.highlight();
-  elementView.addTools(toolsView);
 
-  if (elementView !== previousCellView && previousCellView != null) {
-    graphsteps.push(JSON.stringify(graph.toJSON()));
-    console.log(graphsteps.length);
-    graph_undo_redo = [];
-    previousCellView.unhighlight();
+  if (elementView.model.attributes.type !== "Panel") {
+    elementView.highlight();
+    elementView.addTools(toolsView);
+
+    if (elementView !== previousCellView && previousCellView != null) {
+      graphsteps.push(JSON.stringify(graph.toJSON()));
+      //console.log(graphsteps.length);
+      graph_undo_redo = [];
+      previousCellView.unhighlight();
+    }
+    previousCellView = elementView;
+    $("#container").css("overflow", "hidden");
   }
-  previousCellView = elementView;
-  $("#container").css("overflow", "hidden");
 });
 
 paper.on("blank:pointerdown", function (evt, x, y) {

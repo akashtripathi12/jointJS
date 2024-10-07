@@ -181,6 +181,9 @@ class squareTank extends dia.Element {
           fontFamily: "sans-serif",
           fill: "blue", // Tank label in black
         },
+        water: {
+          text: 0,
+        },
         graph: {
           x: "95",
           y: "20",
@@ -211,6 +214,9 @@ class squareTank extends dia.Element {
         },
       },
       ports: {
+        panel: {
+          size: 5,
+        },
         groups: {
           p1: {
             ...portsIn,
@@ -350,6 +356,9 @@ class LiquidTank extends dia.Element {
           fontFamily: "sans-serif",
           fill: "blue", // Tank label in black
         },
+        water: {
+          text: 0,
+        },
         location: {
           text: "Location", // Label text
           fontSize: 14,
@@ -380,6 +389,9 @@ class LiquidTank extends dia.Element {
         },
       },
       ports: {
+        panel: {
+          size: 5,
+        },
         groups: {
           p1: {
             ...portsIn,
@@ -603,6 +615,9 @@ class BoosterPumpHouse extends dia.Element {
           fontFamily: "sans-serif",
           fill: "blue", // Tank label in black
         },
+        water: {
+          text: 0,
+        },
         graph: {
           x: "100",
           y: "50",
@@ -633,6 +648,9 @@ class BoosterPumpHouse extends dia.Element {
         },
       },
       ports: {
+        panel: {
+          size: 5,
+        },
         groups: {
           p1: {
             ...portsIn,
@@ -784,6 +802,9 @@ class ConicTank extends dia.Element {
           fontFamily: "sans-serif",
           fill: "blue", // Tank label in black
         },
+        water: {
+          text: 0,
+        },
         graph: {
           x: "80",
           y: "10",
@@ -814,6 +835,9 @@ class ConicTank extends dia.Element {
         },
       },
       ports: {
+        panel: {
+          size: 5,
+        },
         groups: {
           p1: {
             ...portsIn,

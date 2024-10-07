@@ -85,27 +85,17 @@ function handleFileLoad(event) {
 // Function to handle saving graph to JSON
 const handlejson = () => {
   try {
-    // Convert the current graph state to JSON
     const graphJson = JSON.stringify(graph.toJSON());
-    //console.log("Graph JSON Data:", graphJson);
-
-    // Create a Blob from the JSON data
     const blob = new Blob([graphJson], { type: "application/json" });
-
-    // Create a link element and trigger download
     const link = document.createElement("a");
     let inputVal = document.getElementById("json2")?.value || "jointjs_graph";
-    link.download = `${inputVal}.json`; // Use input value or default name
+    link.download = `${inputVal}.json`;
 
     link.href = URL.createObjectURL(blob);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-
-    //console.log("Graph downloaded successfully.");
-  } catch (error) {
-    //console.error("Error during download:", error);
-  }
+  } catch (error) {}
 };
 
 const uploadjson = () => {
@@ -123,12 +113,7 @@ const uploadjson = () => {
   reader.onload = () => {
     try {
       graphData = JSON.parse(reader.result);
-      //console.log("Graph data loaded:", graphData);
-
-      // Deserialize the graph with custom properties
       graph.fromJSON(graphData);
-
-      // Add controls after loading the graph
       addControlsFromJSON(graphData);
 
       let json = JSON.parse(reader.result);
@@ -137,15 +122,10 @@ const uploadjson = () => {
           append3rd(cell);
         }
       });
-      //console.log("Graph loaded successfully with controls.");
-    } catch (error) {
-      //console.error("Error parsing JSON:", error);
-    }
+    } catch (error) {}
   };
 
-  reader.onerror = (error) => {
-    //console.error("Error reading file:", error);
-  };
+  reader.onerror = (error) => {};
 };
 
 graph.on("add", function () {
@@ -178,45 +158,34 @@ function addControlsFromJSON(graphData) {
         console.warn(`Unsupported control type: ${controlType}`);
         break;
     }
-
-    // Trigger a change event to update the ports in the graph
-    //cell.trigger("change", cell);
-
-    // Temporarily remove the cell and re-add it to refresh its display
-    //cell.remove({ disconnectLinks: false });
-    //graph.addCell(cell);
   });
 }
 
 // Save the current graph state to localStorage
 const savejson = () => {
   try {
-    // Check if there are any elements in the graph before saving
     const graphJson = JSON.stringify(graph.toJSON());
     if (graph.getElements().length === 0) {
       localStorage.setItem("GraphJson", graphJson);
       return;
     }
 
-    // Save JSON to localStorage
     localStorage.setItem("GraphJson", graphJson);
   } catch (error) {}
 };
 
-// Restore the graph state from localStorage
 window.onbeforeunload = () => {
   localStorage.setItem("isReload", true);
 };
 
 window.onload = () => {
   if (localStorage.getItem("isReload") === "true") {
-    localStorage.removeItem("isReload"); // Remove the flag
+    localStorage.removeItem("isReload");
     const savedGraphJson = localStorage.getItem("GraphJson");
     if (savedGraphJson) {
       try {
         const graphData = JSON.parse(savedGraphJson);
         if (graphData.cells.length > 0) {
-          // Check if there are any elements to load
           try {
             graph.fromJSON(graphData);
             addControlsFromJSON(graphData);
@@ -236,23 +205,17 @@ window.onload = () => {
 //-------------------Clear-----------------------------
 const cleargraph = async () => {
   try {
-    graph.clear(); // Clear the graph contents
-    redoStack = []; // Clear undo/redo stack
-    undoStack = []; // Clear any graph steps or history
+    graph.clear();
+    redoStack = [];
+    undoStack = [];
 
-    // Clear any relevant DOM elements
     let panel = document.getElementById("paper2li");
     if (panel) {
-      panel.innerHTML = ""; // Clear panel content
+      panel.innerHTML = "";
     }
 
-    // Clear the file input field
     $("#file").val("");
 
-    // Optionally clear the graph from localStorage
     localStorage.removeItem("GraphJson");
-    // console.log("Graph removed from local storage.");
-  } catch (error) {
-    // console.error("Error during graph clearing:", error);
-  }
+  } catch (error) {}
 };
