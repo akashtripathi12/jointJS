@@ -122,7 +122,7 @@ const append3rd = (cell) => {
   const initialPositionX = portGroups[defaultPort]?.position?.args?.x || 0;
   const initialPositionY = portGroups[defaultPort]?.position?.args?.y || 0;
   const initialSize = portGroups[defaultPort]?.attrs?.portBody?.r || 1.3;
-  const initialPanelSize = element?.ports?.panel?.size?.text || 5;
+  const initialPanelSize = element?.ports?.panel?.size || 5;
 
   let minX, minY, maxX, maxY;
   if (element.type === "LiquidTank" || element.type === "BoosterPumpHouse") {
