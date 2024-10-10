@@ -1,5 +1,4 @@
 var portsIn = {
-  z: 10,
   position: {
     name: "left",
   },
@@ -145,13 +144,13 @@ class squareTank extends dia.Element {
       },
       attrs: {
         body: {
-          d: "M 0 0 L 150 0 L 150 120 L 0 120 Z", // Concave top shape
+          d: "M 0 0 L calc(w) 0 L calc(w) calc(h) L 0 calc(h) Z",
           fill: {
             type: "linearGradient",
             stops: [
-              { offset: "0%", color: "#f5f5f5" }, // Light metallic gray
-              { offset: "50%", color: "#d1d1d1" }, // Light gray in the middle
-              { offset: "100%", color: "#bfbfbf" }, // Darker gray towards the bottom
+              { offset: "0%", color: "#f5f5f5" },
+              { offset: "50%", color: "#d1d1d1" },
+              { offset: "100%", color: "#bfbfbf" },
             ],
           },
           stroke: "gray",
@@ -161,7 +160,7 @@ class squareTank extends dia.Element {
           text: "Square Tank", // Tank label
           textAnchor: "middle",
           textVerticalAnchor: "top",
-          x: "60", // Center the label horizontally
+          x: "calc(w/2)", // Center the label horizontally
           y: "-20", // Adjust y positioning of the label
           fontSize: 14,
           fontFamily: "sans-serif",
@@ -172,43 +171,44 @@ class squareTank extends dia.Element {
           href: "./Images/Elements/squareTank.jpg",
         },
         waterLevel: {
-          text: "Level 0 m", // Tank label
+          text: "Level 0 m",
           textAnchor: "middle",
           textVerticalAnchor: "bottom",
-          x: "60", // Center the label horizontally
-          y: "150", // Adjust y positioning of the label
+          x: "calc(w/2)",
+          y: "calc(h+30)",
           fontSize: 18,
           fontFamily: "sans-serif",
-          fill: "blue", // Tank label in black
+          fill: "blue",
         },
         water: {
           text: 0,
         },
         graph: {
-          x: "95",
-          y: "20",
+          x: "calc(h-25)",
+          width: "40",
+          height: "100",
           href: "./Images/Elements/graph.svg",
         },
         graphlevel: {
-          text: "0 cbm", // Label text
+          text: "0 cbm",
           fontSize: 8,
           fontWeight: "bold",
           z: 10,
           fontFamily: "Arial",
           fill: "black",
-          x: "115", // Center the label horizontally
-          y: "100", // Adjust y positioning of the label
+          x: "calc(h-5)",
+          y: "calc(h-40)",
           textAnchor: "middle",
           textVerticalAnchor: "middle",
         },
         location: {
-          text: "Location", // Label text
+          text: "Location",
           fontSize: 14,
           z: 10,
           fontFamily: "Arial",
           fill: "black",
-          x: "200", // Center the label horizontally
-          y: "120", // Adjust y positioning of the label
+          x: "calc(w+50)",
+          y: "calc(h)",
           textAnchor: "middle",
           textVerticalAnchor: "middle",
         },
@@ -222,7 +222,7 @@ class squareTank extends dia.Element {
             ...portsIn,
             position: {
               args: {
-                y: "15",
+                y: "20",
               },
             },
           },

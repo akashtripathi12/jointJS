@@ -1,4 +1,5 @@
-var scale = 0.2;
+var scale1 = 0.2;
+var scale = 0.055;
 
 var minimapNavigatorPosition = {
   minX: 0,
@@ -10,13 +11,14 @@ var minimapNavigatorPosition = {
 var minimapPaper = new joint.dia.Paper({
   el: document.getElementById("minimap-paper"),
   model: graph,
-  width: config.paeprWidth * scale, // + 8,
-  height: config.paperHeight * scale, // - 32,
+  width: config.paeprWidth * scale1, // + 8,
+  height: config.paperHeight * scale1, // - 32,
   gridSize: 1,
   interactive: false,
 });
 
-minimapPaper.scale(scale);
+//minimapPaper.scale(0.085);
+minimapPaper.scale(0.055);
 
 // Set minimap navigator width, height
 
@@ -29,12 +31,13 @@ $("#minimap-navigator").height(containerHeight);
 $("#container").scroll(function (e) {
   $("#minimap-navigator").css(
     "top",
-    minimapNavigatorPosition.minY + e.target.scrollTop * scale * (1 / Scale) * 1
+    minimapNavigatorPosition.minY +
+      e.target.scrollTop * scale1 * (1 / Scale) * 1
   );
   $("#minimap-navigator").css(
     "left",
     minimapNavigatorPosition.minX +
-      e.target.scrollLeft * scale * (1 / Scale) * 1
+      e.target.scrollLeft * scale1 * (1 / Scale) * 1
   );
 });
 
@@ -74,8 +77,8 @@ $("#minimap-navigator").mousemove(function (e) {
     }
     $("#minimap-navigator").css("top", newY);
     $("#minimap-navigator").css("left", newX);
-    paperLeftDisplacement = -(newX - minimapNavigatorPosition.minX) / scale;
-    paperTopDisplacement = -(newY - minimapNavigatorPosition.minY) / scale;
+    paperLeftDisplacement = -(newX - minimapNavigatorPosition.minX) / scale1;
+    paperTopDisplacement = -(newY - minimapNavigatorPosition.minY) / scale1;
     paper.translate(paperLeftDisplacement, paperTopDisplacement);
   }
 });

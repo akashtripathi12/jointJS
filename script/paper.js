@@ -375,7 +375,7 @@ var newZoom = 1;
 
 var paper = new joint.dia.Paper({
   el: document.getElementById("paper"),
-  width: k / 1.3, //1.87
+  width: k / 1.35, //1.87
   height: p, //1.36
   gridSize: 1,
   model: graph,
@@ -488,8 +488,8 @@ $("#container").mousemove(async function (event) {
     lleftDisplacement = paperLeftDisplacement;
     paperLeftDisplacement = event.offsetX - dragStartPosition.x;
     paperTopDisplacement = event.offsetY - dragStartPosition.y;
-    leftDisplacement = -paperLeftDisplacement * scale;
-    topDisplacement = -paperTopDisplacement * scale;
+    leftDisplacement = -paperLeftDisplacement * scale1;
+    topDisplacement = -paperTopDisplacement * scale1;
     if (topDisplacement + navigatorh.h > navigatorh.Hei) {
       paperTopDisplacement = ltopDisplacement;
       topDisplacement = document.getElementById("minimap-navigator").style.top;

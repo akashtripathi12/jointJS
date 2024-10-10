@@ -127,9 +127,9 @@ const append3rd = (cell) => {
   let minX, minY, maxX, maxY;
   if (element.type === "LiquidTank" || element.type === "BoosterPumpHouse") {
     minX = 0;
-    minY = 30;
-    maxX = 150;
-    maxY = 160;
+    minY = 0;
+    maxX = element.size.width;
+    maxY = element.size.height;
   } else if (element.type === "ConicTank") {
     minX = 0;
     minY = 0;
