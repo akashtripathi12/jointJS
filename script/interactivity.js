@@ -3,22 +3,19 @@ var previousCellView = null;
 paper.on("element:pointerdown", function (elementView, evt, x, y) {
   elementvisible(elementView.model.id);
 
-  // if (elementView.model.attributes.type !== "Panel") {
-  // let x = elementView.model.attributes.position.x,
-  //   y = elementView.model.attributes.position.y;
-  // elementView.model.resize(120, 100, { x, y });
-  elementView.highlight();
-  elementView.addTools(toolsView);
+  if (elementView.model.attributes.type !== "Panel") {
+    elementView.highlight();
+    elementView.addTools(toolsView);
 
-  if (elementView !== previousCellView && previousCellView != null) {
-    graphsteps.push(JSON.stringify(graph.toJSON()));
-    //console.log(graphsteps.length);
-    graph_undo_redo = [];
-    previousCellView.unhighlight();
+    if (elementView !== previousCellView && previousCellView != null) {
+      graphsteps.push(JSON.stringify(graph.toJSON()));
+      //console.log(graphsteps.length);
+      graph_undo_redo = [];
+      previousCellView.unhighlight();
+    }
+    previousCellView = elementView;
+    $("#container").css("overflow", "hidden");
   }
-  previousCellView = elementView;
-  $("#container").css("overflow", "hidden");
-  //}
 });
 
 paper.on("blank:pointerdown", function (evt, x, y) {
