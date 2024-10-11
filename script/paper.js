@@ -22,7 +22,7 @@ var win = window,
 let k = x;
 let p = y;
 var config = {
-  paeprWidth: k / 1.3, //1.87
+  paeprWidth: k / 1.35, //1.87
   paperHeight: p, //1.36
 };
 
@@ -454,65 +454,6 @@ paper.on("link:pointerdblclick", function (linkView) {
   const link = linkView.model;
   if (link instanceof Pipe) {
     link.remove({ disconnectLinks: false });
-  }
-});
-
-let Scale = 2.2;
-var mouseDownFlag = false;
-var dragStartPosition, navigatorh;
-paper.on("blank:pointerdown", function (event, x, y) {
-  mouseDownFlag = true;
-  dragStartPosition = { x: x, y: y };
-  navigatorh = {
-    h: document.querySelector("#minimap-navigator").getBoundingClientRect()
-      .height,
-    Hei: $("#minimap-paper").height(),
-    w: document.querySelector("#minimap-navigator").getBoundingClientRect()
-      .width,
-    Wei: $("#minimap-paper").width(),
-  };
-});
-
-paper.on("cell:pointerup blank:pointerup", function (cellView, x, y) {
-  mouseDownFlag = false;
-});
-let topDisplacement = 0,
-  leftDisplacement = 0,
-  ltopDisplacement = 0,
-  lleftDisplacement = 0;
-let paperTopDisplacement = 0,
-  paperLeftDisplacement = 0;
-$("#container").mousemove(async function (event) {
-  if (mouseDownFlag) {
-    ltopDisplacement = paperTopDisplacement;
-    lleftDisplacement = paperLeftDisplacement;
-    paperLeftDisplacement = event.offsetX - dragStartPosition.x;
-    paperTopDisplacement = event.offsetY - dragStartPosition.y;
-    leftDisplacement = -paperLeftDisplacement * scale1;
-    topDisplacement = -paperTopDisplacement * scale1;
-    if (topDisplacement + navigatorh.h > navigatorh.Hei) {
-      paperTopDisplacement = ltopDisplacement;
-      topDisplacement = document.getElementById("minimap-navigator").style.top;
-    }
-    if (leftDisplacement + navigatorh.w > navigatorh.Wei) {
-      paperLeftDisplacement = lleftDisplacement;
-      leftDisplacement =
-        document.getElementById("minimap-navigator").style.left;
-    }
-    if (paperLeftDisplacement > 0) {
-      leftDisplacement = 0;
-      paperLeftDisplacement = 0;
-    }
-    if (paperTopDisplacement > 0) {
-      topDisplacement = 0;
-      paperTopDisplacement = 0;
-    }
-    paper.translate(paperLeftDisplacement, paperTopDisplacement);
-    //translate the mini map as well
-    document.getElementById("minimap-navigator").style.left =
-      leftDisplacement + "px";
-    document.getElementById("minimap-navigator").style.top =
-      topDisplacement + "px";
   }
 });
 

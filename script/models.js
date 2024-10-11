@@ -139,8 +139,8 @@ class squareTank extends dia.Element {
       ...super.defaults,
       type: "squareTank",
       size: {
-        width: 150,
-        height: 120,
+        width: 120,
+        height: 100,
       },
       attrs: {
         body: {
@@ -185,8 +185,8 @@ class squareTank extends dia.Element {
         },
         graph: {
           x: "calc(h-25)",
-          width: "40",
-          height: "100",
+          width: "35",
+          height: "90",
           href: "./Images/Elements/graph.svg",
         },
         graphlevel: {

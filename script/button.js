@@ -186,18 +186,19 @@ window.onload = () => {
       try {
         const graphData = JSON.parse(savedGraphJson);
         if (graphData.cells.length > 0) {
-          try {
-            graph.fromJSON(graphData);
-            addControlsFromJSON(graphData);
-            graphData.cells.forEach((cell) => {
-              undoStack.push(cell);
-              if (cell.type != "Pipe" || cell.type != "Panel") {
-                append3rd(cell);
-              }
-            });
-          } catch (error) {}
+          graph.fromJSON(graphData); // Restore the graph state
+          undoStack = []; // Clear the undo stack
+          redoStack = []; // Clear the redo stack
+          graphData.cells.forEach((cell) => {
+            if (cell.type !== "Pipe" && cell.type !== "Panel") {
+              append3rd(cell);
+            }
+          });
+          addControlsFromJSON(graphData); // Add controls after the graph is restored
         }
-      } catch (error) {}
+      } catch (error) {
+        console.error("Error restoring graph state:", error);
+      }
     }
   }
 };
