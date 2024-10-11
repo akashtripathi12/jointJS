@@ -479,8 +479,6 @@ var removeButton = new joint.elementTools.Remove({
       });
 
     redoStack = [];
-
-    console.log("Remove action saved in undo stack.");
   },
 });
 

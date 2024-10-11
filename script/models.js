@@ -139,8 +139,8 @@ class squareTank extends dia.Element {
       ...super.defaults,
       type: "squareTank",
       size: {
-        width: 120,
-        height: 100,
+        width: 150,
+        height: 120,
       },
       attrs: {
         body: {

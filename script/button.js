@@ -196,9 +196,7 @@ window.onload = () => {
           });
           addControlsFromJSON(graphData); // Add controls after the graph is restored
         }
-      } catch (error) {
-        console.error("Error restoring graph state:", error);
-      }
+      } catch (error) {}
     }
   }
 };
