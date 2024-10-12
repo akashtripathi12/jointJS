@@ -678,7 +678,7 @@ function saveNodeSize(cellId) {
   const elements = graph.getCells();
   elements.forEach((element) => {
     if (element.attributes.type === "Pipe") {
-      console.log(element);
+      // console.log(element);
 
       if (element.attributes.source.id === cellId) {
         let portId = element.attributes.source.port,
@@ -773,7 +773,7 @@ function saveNodeSizeNT(cellId) {
   const elements = graph.getCells();
   elements.forEach((element) => {
     if (element.attributes.type === "Pipe") {
-      console.log(element);
+      // console.log(element);
 
       if (element.attributes.source.id === cellId) {
         let portId = element.attributes.source.port,

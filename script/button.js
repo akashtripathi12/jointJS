@@ -13,7 +13,7 @@ const toggle_flag = async () => {
       $("#paper2").css("width", "15.2vw");
     }
     var containerWidth = $("#container").width() * scale;
-    console.log(containerWidth + "komal");
+    // console.log(containerWidth + "komal");
     $("#minimap-navigator").width(containerWidth);
   } else {
     flag = 1;
@@ -27,7 +27,7 @@ const toggle_flag = async () => {
       $(".center").css("width", "64vw");
     }
     var containerWidth = $("#container").width() * scale - 1;
-    console.log(containerWidth + "komal");
+    //console.log(containerWidth + "komal");
     $("#minimap-navigator").width(containerWidth);
     minimapNavigatorPosition.maxX =
       config.paeprWidth * scale - $("#minimap-navigator").width() / Scale;
@@ -82,7 +82,7 @@ function handleFileLoad(event) {
   const jsonContent = event.target.result;
   const jsonData = JSON.parse(jsonContent);
   // Do something with the parsed JSON data (e.g., log it to the console)
-  console.log(jsonData);
+  //console.log(jsonData);
 }
 
 // Function to handle saving graph to JSON
@@ -116,7 +116,7 @@ const uploadjson = () => {
   reader.onload = () => {
     try {
       graphData = JSON.parse(reader.result);
-      console.log(graphData);
+      //console.log(graphData);
 
       graph.fromJSON(graphData);
       addControlsFromJSON(graphData);
@@ -139,7 +139,7 @@ const uploadjson = () => {
 
 function addControlsFromJSON(graphData) {
   graphData.cells.forEach((cellData) => {
-    console.log(cellData);
+    //console.log(cellData);
 
     const cell = graph.getCell(cellData.id);
 

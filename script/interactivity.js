@@ -46,7 +46,7 @@ function SaveDimensionModal(e) {
   dimenMeters = document.getElementById("Dimensioninput").value;
   document.getElementById("Dimensioninput").value = "";
   $("#DimensionModal").modal("hide");
-  console.log($(`#` + currentElement.attributes.id + `text`)[0].innerHTML);
+  //console.log($(`#` + currentElement.attributes.id + `text`)[0].innerHTML);
   $(`#` + currentElement.attributes.id + `text`)[0].innerHTML = dimenMeters;
   currentElement.attr("text/text", dimenMeters);
 }
