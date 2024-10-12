@@ -41,7 +41,7 @@ joint.dia.Graph.prototype.toJSON = function () {
 
   // Iterate over all cells in the graph and add custom properties
   this.getCells().forEach((cell) => {
-    console.log(cell);
+    //console.log(cell);
 
     // Create a JSON representation for each cell with custom properties
     const cellJSON = {
@@ -69,7 +69,7 @@ joint.dia.Graph.prototype.toJSON = function () {
 
     // Add the cell's JSON representation to the array
     cellsArray.push(cellJSON);
-    console.log(cellsArray);
+    //console.log(cellsArray);
   });
 
   // Return the final JSON representation of the graph
