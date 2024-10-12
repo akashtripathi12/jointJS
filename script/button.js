@@ -41,6 +41,8 @@ joint.dia.Graph.prototype.toJSON = function () {
 
   // Iterate over all cells in the graph and add custom properties
   this.getCells().forEach((cell) => {
+    console.log(cell);
+
     // Create a JSON representation for each cell with custom properties
     const cellJSON = {
       id: cell.id, // Unique identifier for the cell
@@ -67,6 +69,7 @@ joint.dia.Graph.prototype.toJSON = function () {
 
     // Add the cell's JSON representation to the array
     cellsArray.push(cellJSON);
+    console.log(cellsArray);
   });
 
   // Return the final JSON representation of the graph
@@ -113,6 +116,8 @@ const uploadjson = () => {
   reader.onload = () => {
     try {
       graphData = JSON.parse(reader.result);
+      console.log(graphData);
+
       graph.fromJSON(graphData);
       addControlsFromJSON(graphData);
 
@@ -122,23 +127,32 @@ const uploadjson = () => {
           append3rd(cell);
         }
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  reader.onerror = (error) => {};
+  graph.on("add", function () {
+    if (graphData) addControlsFromJSON(graphData);
+  });
 };
-
-graph.on("add", function () {
-  if (graphData) addControlsFromJSON(graphData);
-});
 
 function addControlsFromJSON(graphData) {
   graphData.cells.forEach((cellData) => {
+    console.log(cellData);
+
     const cell = graph.getCell(cellData.id);
-    cell.markup = cellData.markup;
+
+    if (cell.markup) cell.markup = cellData.markup;
+    else {
+      return;
+    }
+
     if (!cell || !cell.attributes.attrs.controls) return;
 
     const controlType = cell.attributes.attrs.controls.type;
+    console.log(controlType);
+
     const cellView = cell.findView(paper);
 
     // Add controls based on control type
@@ -186,15 +200,15 @@ window.onload = () => {
       try {
         const graphData = JSON.parse(savedGraphJson);
         if (graphData.cells.length > 0) {
-          graph.fromJSON(graphData); // Restore the graph state
-          undoStack = []; // Clear the undo stack
-          redoStack = []; // Clear the redo stack
-          graphData.cells.forEach((cell) => {
-            if (cell.type !== "Pipe" && cell.type !== "Panel") {
+          try {
+            graph.fromJSON(graphData);
+            addControlsFromJSON(graphData);
+            graphData.cells.forEach((cell) => {
+              undoStack.push(cell);
+
               append3rd(cell);
-            }
-          });
-          addControlsFromJSON(graphData); // Add controls after the graph is restored
+            });
+          } catch (error) {}
         }
       } catch (error) {}
     }

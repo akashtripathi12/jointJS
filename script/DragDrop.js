@@ -119,6 +119,93 @@ graph.on("add", (cell) => {
     panel.addTo(graph);
     cell.embed(panel);
   }
+
+  if (cell instanceof LiquidTank1) {
+    const panel = new Panel1();
+    panel.position(cell.position().x + 10, cell.position().y + 45);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (cell instanceof BoosterPumpHouse1) {
+    const panel = new Panel1();
+    panel.position(cell.position().x + 10, cell.position().y + 52);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (cell instanceof squareTank1) {
+    const panel = new Panel1();
+    panel.position(cell.position().x + 10, cell.position().y + 10);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (cell instanceof ConicTank1) {
+    const panel = new Panel1();
+    panel.position(cell.position().x + 8, cell.position().y + 10);
+    panel.addTo(graph);
+    cell.embed(panel);
+  }
+
+  if (cell instanceof LiquidTank3) {
+    const panel = new Panel3();
+    panel.position(cell.position().x + 10, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (cell instanceof BoosterPumpHouse3) {
+    const panel = new Panel3();
+    panel.position(cell.position().x + 5, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (cell instanceof squareTank3) {
+    const panel = new Panel3();
+    panel.position(cell.position().x + 10, cell.position().y + 15);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (cell instanceof ConicTank3) {
+    const panel = new Panel3();
+    panel.position(cell.position().x + 9, cell.position().y + 12);
+    panel.addTo(graph);
+    cell.embed(panel);
+  }
+
+  if (cell instanceof LiquidTank2) {
+    const panel = new Panel2();
+    panel.position(cell.position().x + 10, cell.position().y + 50);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (cell instanceof BoosterPumpHouse2) {
+    const panel = new Panel2();
+    panel.position(cell.position().x + 10, cell.position().y + 52);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (cell instanceof squareTank2) {
+    const panel = new Panel2();
+    panel.position(cell.position().x + 10, cell.position().y + 10);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (cell instanceof ConicTank2) {
+    const panel = new Panel2();
+    panel.position(cell.position().x + 10, cell.position().y + 15);
+    panel.addTo(graph);
+    cell.embed(panel);
+  }
+  if (cell instanceof LiquidTank4) {
+    const panel = new Panel4();
+    panel.position(cell.position().x + 10, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (cell instanceof BoosterPumpHouse4) {
+    const panel = new Panel4();
+    panel.position(cell.position().x + 2, cell.position().y + 60);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (cell instanceof squareTank4) {
+    const panel = new Panel4();
+    panel.position(cell.position().x + 10, cell.position().y + 13);
+    panel.addTo(graph);
+    cell.embed(panel);
+  } else if (cell instanceof ConicTank4) {
+    const panel = new Panel4();
+    panel.position(cell.position().x + 5, cell.position().y + 10);
+    panel.addTo(graph);
+    cell.embed(panel);
+  }
 });
 
 // necessary for the drop event to trigger

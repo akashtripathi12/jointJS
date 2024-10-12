@@ -154,7 +154,7 @@ body {
 #container {
   height: 82vh !important;
   overflow: hidden;
-  border: 2px solid #000; /* Set the border of the container */
+  border: none;
 }
 .noscroll {
   overflow: hidden;

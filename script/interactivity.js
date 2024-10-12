@@ -29,6 +29,19 @@ paper.on("blank:pointerdown", function (evt, x, y) {
 
 let dimenMeters;
 let currentElement;
+// paper.on("element:pointerdblclick", function (elementView) {
+//   ///resetAll(this);
+//   console.log(elementView.model.attributes.id);
+//   currentElement = elementView.model;
+//   var name = elementView.model.attributes.attrs.text;
+
+//   document.getElementById("DimensionModal-Title").innerHTML =
+//     "rename model " + name;
+//   $("#DimensionModal").modal("show");
+//   $("#DimensionModal").on("shown.bs.modal", function () {
+//     $(this).find("input:first").focus();
+//   });
+// });
 function SaveDimensionModal(e) {
   dimenMeters = document.getElementById("Dimensioninput").value;
   document.getElementById("Dimensioninput").value = "";

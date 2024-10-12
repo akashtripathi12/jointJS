@@ -1,3 +1,4 @@
+let cellId;
 //--------------------------right pannel list-------------------------------
 const disableClick = () => {
   $("#paper2li")
@@ -12,7 +13,7 @@ const append3rd = (cell) => {
   let element = cell.attributes;
   if (element === undefined) {
     element = cell;
-    if (element.type === "Panel") return;
+    if (element.type === "Panel" || element.type === "Pipe") return;
   }
 
   let listItem = `
@@ -122,24 +123,96 @@ const append3rd = (cell) => {
   const initialPositionX = portGroups[defaultPort]?.position?.args?.x || 0;
   const initialPositionY = portGroups[defaultPort]?.position?.args?.y || 0;
   const initialSize = portGroups[defaultPort]?.attrs?.portBody?.r || 1.3;
-  const initialPanelSize = element?.ports?.panel?.size || 5;
+
+  const initialNodeSize = element?.attrs?.node?.size || 5;
+  const intialNodeSizeNT = element?.attrs?.node?.size || 3;
 
   let minX, minY, maxX, maxY;
-  if (element.type === "LiquidTank" || element.type === "BoosterPumpHouse") {
-    minX = 0;
-    minY = 0;
-    maxX = element.size.width;
-    maxY = element.size.height;
-  } else if (element.type === "ConicTank") {
-    minX = 0;
-    minY = 0;
-    maxX = 132;
-    maxY = 170;
-  } else if (element.type === "squareTank") {
-    minX = 0;
-    minY = 0;
-    maxX = 150;
-    maxY = 120;
+  if (initialNodeSize === 5) {
+    if (element.type === "LiquidTank" || element.type === "BoosterPumpHouse") {
+      minX = 0;
+      minY = 30;
+      maxX = 150;
+      maxY = 160;
+    } else if (element.type === "ConicTank") {
+      minX = 0;
+      minY = 0;
+      maxX = 132;
+      maxY = 170;
+    } else if (element.type === "squareTank") {
+      minX = 0;
+      minY = 0;
+      maxX = 150;
+      maxY = 120;
+    }
+  } else if (initialNodeSize === 4) {
+    if (element.type === "LiquidTank" || element.type === "BoosterPumpHouse") {
+      minX = 0;
+      minY = 30;
+      maxX = 130;
+      maxY = 140;
+    } else if (element.type === "ConicTank") {
+      minX = 0;
+      minY = 0;
+      maxX = 120;
+      maxY = 160;
+    } else if (element.type === "squareTank") {
+      minX = 0;
+      minY = 0;
+      maxX = 130;
+      maxY = 100;
+    }
+  } else if (initialNodeSize === 3) {
+    if (element.type === "LiquidTank" || element.type === "BoosterPumpHouse") {
+      minX = 0;
+      minY = 30;
+      maxX = 120;
+      maxY = 130;
+    } else if (element.type === "ConicTank") {
+      minX = 0;
+      minY = 0;
+      maxX = 110;
+      maxY = 148;
+    } else if (element.type === "squareTank") {
+      minX = 0;
+      minY = 0;
+      maxX = 110;
+      maxY = 90;
+    }
+  } else if (initialNodeSize === 2) {
+    if (element.type === "LiquidTank" || element.type === "BoosterPumpHouse") {
+      minX = 0;
+      minY = 30;
+      maxX = 100;
+      maxY = 110;
+    } else if (element.type === "ConicTank") {
+      minX = 0;
+      minY = 0;
+      maxX = 100;
+      maxY = 135;
+    } else if (element.type === "squareTank") {
+      minX = 0;
+      minY = 0;
+      maxX = 90;
+      maxY = 70;
+    }
+  } else if (initialNodeSize === 1) {
+    if (element.type === "LiquidTank" || element.type === "BoosterPumpHouse") {
+      minX = 0;
+      minY = 30;
+      maxX = 80;
+      maxY = 90;
+    } else if (element.type === "ConicTank") {
+      minX = 0;
+      minY = 0;
+      maxX = 70;
+      maxY = 75;
+    } else if (element.type === "squareTank") {
+      minX = 0;
+      minY = 0;
+      maxX = 70;
+      maxY = 50;
+    }
   }
   if (
     element.type === "LiquidTank" ||
@@ -196,14 +269,35 @@ const append3rd = (cell) => {
     </li>
      <li class="UL">
       <div class="edit-container">
-        <span class="display">Panel Size:</span>
+        <span class="display">Element:</span>
         <input id="${element.id}-panel-slider" 
           type="range"
           min="1"
           max="5"
           step="1"
-          value="${initialPanelSize}" 
-          oninput="savePanelSize('${element.id}', this.value)" 
+          value="${initialNodeSize}" 
+          oninput="saveNodeSize('${element.id}', this.value)" 
+          />
+      </div>
+    </li>`;
+  }
+
+  if (
+    element.type === "HandValve" ||
+    element.type === "Pump" ||
+    element.type === "ControlValve" ||
+    element.type === "FlowMeter"
+  ) {
+    listItem += `<li class="UL">
+      <div class="edit-container">
+        <span class="display">ReSize:</span>
+        <input id="${element.id}-panel-slider" 
+          type="range"
+          min="1"
+          max="3"
+          step="1"
+          value="${intialNodeSizeNT}" 
+          oninput="saveNodeSizeNT('${element.id}', this.value)" 
           />
       </div>
     </li>`;
@@ -319,13 +413,13 @@ function saveWaterLevel(cellId) {
     const cell = graph.getCell(cellId);
     if (cell) {
       if (panelSize === 1) {
-        setLevel(cell, (newWaterLevel / 5) * 100, 39, 45);
+        setLevel(cell, (newWaterLevel / 5) * 100, 30, 32);
       } else if (panelSize === 2) {
-        setLevel(cell, (newWaterLevel / 5) * 100, 49, 55);
+        setLevel(cell, (newWaterLevel / 5) * 100, 40, 46);
       } else if (panelSize === 3) {
-        setLevel(cell, (newWaterLevel / 5) * 100, 59, 65);
+        setLevel(cell, (newWaterLevel / 5) * 100, 50, 56);
       } else if (panelSize === 4) {
-        setLevel(cell, (newWaterLevel / 5) * 100, 69, 75);
+        setLevel(cell, (newWaterLevel / 5) * 100, 60, 66);
       } else if (panelSize === 5) {
         setLevel(cell, (newWaterLevel / 5) * 100, 79, 85);
       }
@@ -534,48 +628,182 @@ function updatePortValues(cellId) {
   }
 }
 
+let previous;
 // Function to handle saving size of the panel using the slider
-function savePanelSize(cellId) {
+function saveNodeSize(cellId) {
   const inputSize = document.getElementById(`${cellId}-panel-slider`);
   let newSize = parseFloat(inputSize.value.trim());
 
   const cell = graph.getCell(cellId);
-  const panel = graph.getCell(cell.attributes.embeds[0]);
 
-  let width, height;
-  if (panel) {
+  previous = {
+    waterLevel: cell.attributes.attrs.waterLevel.text,
+    water: cell.attributes.attrs.water.text,
+    graphlevel: cell.attributes.attrs.graphlevel.text,
+    label: cell.attributes.attrs.label.text,
+    location: cell.attributes.attrs.location.text,
+    positionX: cell.attributes.position.x,
+    positionY: cell.attributes.position.y,
+  };
+
+  let newElement;
+  switch (newSize) {
+    case 1:
+      newElement = updateNodeSize1(cell, previous);
+      break;
+    case 2:
+      newElement = updateNodeSize2(cell, previous);
+      break;
+    case 3:
+      newElement = updateNodeSize3(cell, previous);
+      break;
+    case 4:
+      newElement = updateNodeSize4(cell, previous);
+      break;
+    case 5:
+      newElement = updateNodeSize5(cell, previous);
+      break;
+  }
+  newElement.attributes.attrs.waterLevel.text = previous.waterLevel;
+  newElement.attributes.attrs.water.text = previous.water;
+  newElement.attributes.attrs.graphlevel.text = previous.graphlevel;
+  newElement.attributes.attrs.label.text = previous.label;
+  newElement.attributes.attrs.location.text = previous.location;
+  newElement.attributes.position.x = previous.positionX;
+  newElement.attributes.position.y = previous.positionY;
+
+  let newWaterLevel = newElement.attributes.attrs.water.text;
+
+  graph.addCell(newElement);
+  const elements = graph.getCells();
+  elements.forEach((element) => {
+    if (element.attributes.type === "Pipe") {
+      console.log(element);
+
+      if (element.attributes.source.id === cellId) {
+        let portId = element.attributes.source.port,
+          magnet = element.attributes.source.magnet;
+        element.set("source", {
+          id: newElement.id,
+          magnet: magnet,
+          port: portId,
+        });
+      }
+      if (element.attributes.target.id === cellId) {
+        let portId = element.attributes.target.port,
+          magnet = element.attributes.target.magnet;
+        element.set("target", {
+          id: newElement.id,
+          magnet: magnet,
+          port: portId,
+        });
+      }
+    }
+  });
+
+  if (newElement) {
+    cell.remove({ disconnectLinks: false });
     if (newSize === 1) {
-      width = 50;
-      height = 50;
-      cell.attributes.ports.panel.size = 1;
+      setLevel(newElement, (newWaterLevel / 5) * 100, 30, 32);
+    } else if (newSize === 2) {
+      setLevel(newElement, (newWaterLevel / 5) * 100, 40, 46);
+    } else if (newSize === 3) {
+      setLevel(newElement, (newWaterLevel / 5) * 100, 50, 56);
+    } else if (newSize === 4) {
+      setLevel(newElement, (newWaterLevel / 5) * 100, 60, 66);
+    } else if (newSize === 5) {
+      setLevel(newElement, (newWaterLevel / 5) * 100, 79, 85);
     }
-    if (newSize === 2) {
-      width = 55;
-      height = 60;
-      cell.attributes.ports.panel.size = 2;
-    }
-    if (newSize === 3) {
-      width = 50;
-      height = 70;
-      cell.attributes.ports.panel.size = 3;
-    }
-    if (newSize === 4) {
-      width = 60;
-      height = 80;
-      cell.attributes.ports.panel.size = 4;
-    }
-    if (newSize === 5) {
-      width = 70;
-      height = 90;
-      cell.attributes.ports.panel.size = 5;
-    }
-    panel.remove({ disconnectLinks: false });
 
-    if (cell.attributes.power === 0) {
-      addPanelwithSize(cell.attributes.type, cell, width, height);
-    } else {
-      addPanelwithSize(cell.attributes.type, cell, width, height);
+    const cellView = paper.findViewByModel(newElement);
+    if (cellView) {
+      cellView.update();
     }
+    $("#paper2li").find(`#${cellId}`).remove();
+    append3rd(newElement);
+  }
+}
+
+function saveNodeSizeNT(cellId) {
+  const inputSize = document.getElementById(`${cellId}-panel-slider`);
+  let newSize = parseFloat(inputSize.value.trim());
+
+  const cell = graph.getCell(cellId);
+
+  previous = {
+    label: cell.attributes.attrs.label.text,
+    positionX: cell.attributes.position.x,
+    positionY: cell.attributes.position.y,
+  };
+  if (cell.attributes.type === "FlowMeter" || cell.type === "FlowMeter") {
+    previous = {
+      label: cell.attributes.attrs.label.text,
+      positionX: cell.attributes.position.x,
+      positionY: cell.attributes.position.y,
+      mld: cell.attributes.attrs.mld.text,
+      m3h: cell.attributes.attrs.m3h.text,
+    };
+  }
+
+  let newElement;
+  switch (newSize) {
+    case 1:
+      newElement = updateNodeSize1(cell);
+      break;
+    case 2:
+      newElement = updateNodeSize2(cell);
+      break;
+    case 3:
+      newElement = updateNodeSize3(cell);
+      break;
+  }
+  if (cell.attributes.type === "FlowMeter" || cell.type === "FlowMeter") {
+    newElement.attributes.attrs.label.text = previous.label;
+    newElement.attributes.position.x = previous.positionX;
+    newElement.attributes.position.y = previous.positionY;
+    newElement.attributes.attrs.mld.text = previous.mld;
+    newElement.attributes.attrs.m3h.text = previous.m3h;
+  } else {
+    newElement.attributes.attrs.label.text = previous.label;
+    newElement.attributes.position.x = previous.positionX;
+    newElement.attributes.position.y = previous.positionY;
+  }
+
+  graph.addCell(newElement);
+  const elements = graph.getCells();
+  elements.forEach((element) => {
+    if (element.attributes.type === "Pipe") {
+      console.log(element);
+
+      if (element.attributes.source.id === cellId) {
+        let portId = element.attributes.source.port,
+          magnet = element.attributes.source.magnet;
+        element.set("source", {
+          id: newElement.id,
+          magnet: magnet,
+          port: portId,
+        });
+      }
+      if (element.attributes.target.id === cellId) {
+        let portId = element.attributes.target.port,
+          magnet = element.attributes.target.magnet;
+        element.set("target", {
+          id: newElement.id,
+          magnet: magnet,
+          port: portId,
+        });
+      }
+    }
+  });
+
+  if (newElement) {
+    cell.remove({ disconnectLinks: false });
+    const cellView = paper.findViewByModel(newElement);
+    if (cellView) {
+      cellView.update();
+    }
+    $("#paper2li").find(`#${cellId}`).remove();
+    append3rd(newElement);
   }
 }
 
@@ -672,127 +900,227 @@ setPanelLevel = (cell, level, heightFactor, yOffset) => {
   cell.attr("liquid/y", yOffset - liquidHeight);
 };
 
-addPanelwithSize = (type, cell, width, height) => {
-  if (width === 50 && height === 50) {
-    addPanel1(type, cell);
-  } else if (width === 55 && height === 60) {
-    addPanel2(type, cell);
-  } else if (width === 50 && height === 70) {
-    addPanel3(type, cell);
-  } else if (width === 60 && height === 80) {
-    addPanel4(type, cell);
-  } else if (width === 70 && height === 90) {
-    addPanel(type, cell);
+updateNodeSize1 = (cell) => {
+  let type = cell.type || cell.attributes.type;
+
+  if (type === "LiquidTank") {
+    return new LiquidTank1();
+  } else if (type === "BoosterPumpHouse") {
+    return new BoosterPumpHouse1();
+  } else if (type === "squareTank") {
+    return new squareTank1();
+  } else if (type === "ConicTank") {
+    return new ConicTank1();
+  } else if (type === "HandValve") {
+    return new HandValve1();
+  } else if (type === "ControlValve") {
+    return new ControlValve1();
+  } else if (type === "Pump") {
+    return new Pump1();
+  } else if (type === "FlowMeter") {
+    return new FlowMeter1();
+  } else {
+    throw new Error(`Unsupported cell type: ${type}`);
   }
 };
+
+updateNodeSize2 = (cell) => {
+  let type = cell.type || cell.attributes.type;
+  if (type === "LiquidTank") {
+    return new LiquidTank2();
+  } else if (type === "BoosterPumpHouse") {
+    return new BoosterPumpHouse2();
+  } else if (type === "squareTank") {
+    return new squareTank2();
+  } else if (type === "ConicTank") {
+    return new ConicTank2();
+  } else if (type === "HandValve") {
+    return new HandValve2();
+  } else if (type === "ControlValve") {
+    return new ControlValve2();
+  } else if (type === "Pump") {
+    return new Pump2();
+  } else if (type === "FlowMeter") {
+    return new FlowMeter2();
+  } else {
+    throw new Error(`Unsupported cell type: ${type}`);
+  }
+};
+
+updateNodeSize3 = (cell) => {
+  let type = cell.type || cell.attributes.type;
+  if (type === "LiquidTank") {
+    return new LiquidTank3();
+  } else if (type === "BoosterPumpHouse") {
+    return new BoosterPumpHouse3();
+  } else if (type === "squareTank") {
+    return new squareTank3();
+  } else if (type === "ConicTank") {
+    return new ConicTank3();
+  } else if (type === "HandValve") {
+    return new HandValve();
+  } else if (type === "ControlValve") {
+    return new ControlValve();
+  } else if (type === "Pump") {
+    return new Pump();
+  } else if (type === "FlowMeter") {
+    return new FlowMeter();
+  } else {
+    throw new Error(`Unsupported cell type: ${type}`);
+  }
+};
+
+updateNodeSize4 = (cell) => {
+  let type = cell.type || cell.attributes.type;
+  if (type === "LiquidTank") {
+    return new LiquidTank4();
+  } else if (type === "BoosterPumpHouse") {
+    return new BoosterPumpHouse4();
+  } else if (type === "squareTank") {
+    return new squareTank4();
+  } else if (type === "ConicTank") {
+    return new ConicTank4();
+  } else {
+    throw new Error(`Unsupported cell type: ${type}`);
+  }
+};
+
+updateNodeSize5 = (cell) => {
+  let type = cell.type || cell.attributes.type;
+  if (type === "LiquidTank") {
+    return new LiquidTank();
+  } else if (type === "BoosterPumpHouse") {
+    return new BoosterPumpHouse();
+  } else if (type === "squareTank") {
+    return new squareTank();
+  } else if (type === "ConicTank") {
+    return new ConicTank();
+  } else {
+    throw new Error(`Unsupported cell type: ${type}`);
+  }
+};
+
+// addPanelwithSize = (type, cell, width, height) => {
+//   if (width === 50 && height === 50) {
+//     addPanel1(type, cell);
+//   } else if (width === 55 && height === 60) {
+//     addPanel2(type, cell);
+//   } else if (width === 50 && height === 70) {
+//     addPanel3(type, cell);
+//   } else if (width === 60 && height === 80) {
+//     addPanel4(type, cell);
+//   } else if (width === 70 && height === 90) {
+//     addPanel(type, cell);
+//   }
+// };
 
 //add Panel if JSON save
-addPanel1 = (type, cell) => {
-  const panel = new Panel1();
-  if (type === "LiquidTank") {
-    panel.position(cell.position().x + 10, cell.position().y + 60);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "BoosterPumpHouse") {
-    panel.position(cell.position().x + 5, cell.position().y + 60);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "squareTank") {
-    panel.position(cell.position().x + 10, cell.position().y + 20);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "ConicTank") {
-    panel.position(cell.position().x + 5, cell.position().y + 10);
-    panel.addTo(graph);
-    cell.embed(panel);
-  }
-  setLevel(cell, (cell.attributes.attrs.water.text / 5) * 100, 39, 45);
-};
+// addPanel1 = (type, cell) => {
+//   const panel = new Panel1();
+//   if (type === "LiquidTank") {
+//     panel.position(cell.position().x + 10, cell.position().y + 60);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "BoosterPumpHouse") {
+//     panel.position(cell.position().x + 5, cell.position().y + 60);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "squareTank") {
+//     panel.position(cell.position().x + 10, cell.position().y + 20);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "ConicTank") {
+//     panel.position(cell.position().x + 5, cell.position().y + 10);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   }
+//   setLevel(cell, (cell.attributes.attrs.water.text / 5) * 100, 39, 45);
+// };
 
-addPanel2 = (type, cell) => {
-  const panel = new Panel2();
-  if (type === "LiquidTank") {
-    panel.position(cell.position().x + 10, cell.position().y + 60);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "BoosterPumpHouse") {
-    panel.position(cell.position().x + 5, cell.position().y + 60);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "squareTank") {
-    panel.position(cell.position().x + 10, cell.position().y + 20);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "ConicTank") {
-    panel.position(cell.position().x + 5, cell.position().y + 10);
-    panel.addTo(graph);
-    cell.embed(panel);
-  }
-  setLevel(cell, (cell.attributes.attrs.water.text / 5) * 100, 49, 55);
-};
+// addPanel2 = (type, cell) => {
+//   const panel = new Panel2();
+//   if (type === "LiquidTank") {
+//     panel.position(cell.position().x + 10, cell.position().y + 60);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "BoosterPumpHouse") {
+//     panel.position(cell.position().x + 5, cell.position().y + 60);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "squareTank") {
+//     panel.position(cell.position().x + 10, cell.position().y + 20);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "ConicTank") {
+//     panel.position(cell.position().x + 5, cell.position().y + 10);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   }
+//   setLevel(cell, (cell.attributes.attrs.water.text / 5) * 100, 49, 55);
+// };
 
-addPanel3 = (type, cell) => {
-  const panel = new Panel3();
-  if (type === "LiquidTank") {
-    panel.position(cell.position().x + 10, cell.position().y + 60);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "BoosterPumpHouse") {
-    panel.position(cell.position().x + 5, cell.position().y + 60);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "squareTank") {
-    panel.position(cell.position().x + 10, cell.position().y + 20);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "ConicTank") {
-    panel.position(cell.position().x + 5, cell.position().y + 10);
-    panel.addTo(graph);
-    cell.embed(panel);
-  }
-  setLevel(cell, (cell.attributes.attrs.water.text / 5) * 100, 59, 65);
-};
+// addPanel3 = (type, cell) => {
+//   const panel = new Panel3();
+//   if (type === "LiquidTank") {
+//     panel.position(cell.position().x + 10, cell.position().y + 60);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "BoosterPumpHouse") {
+//     panel.position(cell.position().x + 5, cell.position().y + 60);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "squareTank") {
+//     panel.position(cell.position().x + 10, cell.position().y + 20);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "ConicTank") {
+//     panel.position(cell.position().x + 5, cell.position().y + 10);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   }
+//   setLevel(cell, (cell.attributes.attrs.water.text / 5) * 100, 59, 65);
+// };
 
-addPanel4 = (type, cell) => {
-  const panel = new Panel4();
-  if (type === "LiquidTank") {
-    panel.position(cell.position().x + 10, cell.position().y + 60);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "BoosterPumpHouse") {
-    panel.position(cell.position().x + 5, cell.position().y + 60);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "squareTank") {
-    panel.position(cell.position().x + 10, cell.position().y + 20);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "ConicTank") {
-    panel.position(cell.position().x + 5, cell.position().y + 10);
-    panel.addTo(graph);
-    cell.embed(panel);
-  }
-  setLevel(cell, (cell.attributes.attrs.water.text / 5) * 100, 69, 75);
-};
+// addPanel4 = (type, cell) => {
+//   const panel = new Panel4();
+//   if (type === "LiquidTank") {
+//     panel.position(cell.position().x + 10, cell.position().y + 60);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "BoosterPumpHouse") {
+//     panel.position(cell.position().x + 5, cell.position().y + 60);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "squareTank") {
+//     panel.position(cell.position().x + 10, cell.position().y + 20);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "ConicTank") {
+//     panel.position(cell.position().x + 5, cell.position().y + 10);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   }
+//   setLevel(cell, (cell.attributes.attrs.water.text / 5) * 100, 69, 75);
+// };
 
-addPanel = (type, cell) => {
-  const panel = new Panel();
-  if (type === "LiquidTank") {
-    panel.position(cell.position().x + 10, cell.position().y + 60);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "BoosterPumpHouse") {
-    panel.position(cell.position().x + 5, cell.position().y + 60);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "squareTank") {
-    panel.position(cell.position().x + 10, cell.position().y + 20);
-    panel.addTo(graph);
-    cell.embed(panel);
-  } else if (type === "ConicTank") {
-    panel.position(cell.position().x + 5, cell.position().y + 10);
-    panel.addTo(graph);
-    cell.embed(panel);
-  }
-  setLevel(cell, (cell.attributes.attrs.water.text / 5) * 100, 79, 85);
-};
+// addPanel = (type, cell) => {
+//   const panel = new Panel();
+//   if (type === "LiquidTank") {
+//     panel.position(cell.position().x + 10, cell.position().y + 60);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "BoosterPumpHouse") {
+//     panel.position(cell.position().x + 5, cell.position().y + 60);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "squareTank") {
+//     panel.position(cell.position().x + 10, cell.position().y + 20);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   } else if (type === "ConicTank") {
+//     panel.position(cell.position().x + 5, cell.position().y + 10);
+//     panel.addTo(graph);
+//     cell.embed(panel);
+//   }
+//   setLevel(cell, (cell.attributes.attrs.water.text / 5) * 100, 79, 85);
+// };
