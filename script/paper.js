@@ -139,7 +139,7 @@ const PumpView = joint.dia.ElementView.extend({
     let { spinAnimation } = this;
     if (spinAnimation) return spinAnimation;
     const [rotorEl] = this.findBySelector("rotor");
-    //console.log(rotorEl);
+    //// console.log(rotorEl);
 
     // It's important to use start and end frames to make it work in Safari.
     const keyframes = { transform: ["rotate(0deg)", "rotate(360deg)"] };
@@ -157,7 +157,7 @@ const PumpView = joint.dia.ElementView.extend({
 
     // Log the power value for debugging purposes
     if (model.power != undefined) {
-      //console.log("Current power value:", model.power);
+      //// console.log("Current power value:", model.power);
 
       // Check if model.power is a valid number
       let power = model.power;
@@ -168,7 +168,7 @@ const PumpView = joint.dia.ElementView.extend({
       // Set the playback rate to the validated power value
       this.getSpinAnimation().playbackRate = power;
     } else {
-      //console.log("Current power value:", model.attributes.power);
+      //// console.log("Current power value:", model.attributes.power);
       let power = model.attributes.power;
       if (typeof power !== "number" || !isFinite(power)) {
         power = 1; // Set a default playback rate if power is not valid
@@ -545,3 +545,5 @@ var removeButton = new joint.elementTools.Remove({
 var toolsView = new joint.dia.ToolsView({
   tools: [removeButton],
 });
+
+//animation stop and play

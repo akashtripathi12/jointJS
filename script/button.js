@@ -1,47 +1,47 @@
 let graphData;
-const toggle_flag = async () => {
-  if (flag) {
-    flag = 0;
+// const toggle_flag = async () => {
+//   if (flag) {
+//     flag = 0;
 
-    if (window.innerWidth < 1650) {
-      $(".main").css("grid-template-columns", "1fr 2.5fr 3fr");
-      $(".center").css("width", "51vw");
-      $("#paper2").css("width", "20vw ");
-    }
-    if (window.innerWidth > 1650) {
-      $(".center").css("width", "58.2vw");
-      $("#paper2").css("width", "15.2vw");
-    }
-    var containerWidth = $("#container").width() * scale;
-    // console.log(containerWidth + "komal");
-    $("#minimap-navigator").width(containerWidth);
-  } else {
-    flag = 1;
-    if (window.innerWidth < 1650) {
-      $(".main").css("grid-template-columns", "1.5fr 5.8fr 2.7fr");
-      $(".center").css("width", "62vw");
-      $("#paper2").css("width", "20vw ");
-    }
-    if (window.innerWidth > 1650) {
-      $("#paper2").css("width", "18vw");
-      $(".center").css("width", "64vw");
-    }
-    var containerWidth = $("#container").width() * scale - 1;
-    //console.log(containerWidth + "komal");
-    $("#minimap-navigator").width(containerWidth);
-    minimapNavigatorPosition.maxX =
-      config.paeprWidth * scale - $("#minimap-navigator").width() / Scale;
-    minimapNavigatorPosition.maxY =
-      config.paperHeight * scale - $("#minimap-navigator").height() / Scale;
-  }
-};
+//     if (window.innerWidth < 1650) {
+//       $(".main").css("grid-template-columns", "1fr 2.5fr 3fr");
+//       $(".center").css("width", "51vw");
+//       $("#paper2").css("width", "20vw ");
+//     }
+//     if (window.innerWidth > 1650) {
+//       $(".center").css("width", "58.2vw");
+//       $("#paper2").css("width", "15.2vw");
+//     }
+//     var containerWidth = $("#container").width() * scale;
+//     // // console.log(containerWidth + "komal");
+//     $("#minimap-navigator").width(containerWidth);
+//   } else {
+//     flag = 1;
+//     if (window.innerWidth < 1650) {
+//       $(".main").css("grid-template-columns", "1.5fr 5.8fr 2.7fr");
+//       $(".center").css("width", "62vw");
+//       $("#paper2").css("width", "20vw ");
+//     }
+//     if (window.innerWidth > 1650) {
+//       $("#paper2").css("width", "18vw");
+//       $(".center").css("width", "64vw");
+//     }
+//     var containerWidth = $("#container").width() * scale - 1;
+//     //// console.log(containerWidth + "komal");
+//     $("#minimap-navigator").width(containerWidth);
+//     minimapNavigatorPosition.maxX =
+//       config.paeprWidth * scale - $("#minimap-navigator").width() / Scale;
+//     minimapNavigatorPosition.maxY =
+//       config.paperHeight * scale - $("#minimap-navigator").height() / Scale;
+//   }
+// };
 
 joint.dia.Graph.prototype.toJSON = function () {
   const cellsArray = [];
 
   // Iterate over all cells in the graph and add custom properties
   this.getCells().forEach((cell) => {
-    //console.log(cell);
+    //// console.log(cell);
 
     // Create a JSON representation for each cell with custom properties
     const cellJSON = {
@@ -52,9 +52,10 @@ joint.dia.Graph.prototype.toJSON = function () {
       attrs: cell.get("attrs"), // SVG attributes like styles and labels
       z: cell.get("z"), // Z-index to manage the stacking order
       parent: cell.get("parent"), // Parent element (if any)
-      markup: cell.markup, // Markup for SVG rendering
+      markup: cell.markup || cell.get("markup"), // Markup for SVG rendering
       embeds: cell.get("embeds"), // Embedded elements (if any)
       ports: cell.get("ports"), // Port configurations (if any)
+      angle: cell.get("angle"),
       power: 0, // Include power property (default value is 1 if undefined)
       controls: cell.get("controls"), // Custom controls property if available
     };
@@ -69,7 +70,7 @@ joint.dia.Graph.prototype.toJSON = function () {
 
     // Add the cell's JSON representation to the array
     cellsArray.push(cellJSON);
-    //console.log(cellsArray);
+    //// console.log(cellsArray);
   });
 
   // Return the final JSON representation of the graph
@@ -82,13 +83,15 @@ function handleFileLoad(event) {
   const jsonContent = event.target.result;
   const jsonData = JSON.parse(jsonContent);
   // Do something with the parsed JSON data (e.g., log it to the console)
-  //console.log(jsonData);
+  //// console.log(jsonData);
 }
 
 // Function to handle saving graph to JSON
 const handlejson = () => {
   try {
     const graphJson = JSON.stringify(graph.toJSON());
+    // console.log(graph.toJSON());
+
     const blob = new Blob([graphJson], { type: "application/json" });
     const link = document.createElement("a");
     let inputVal = document.getElementById("json2")?.value || "jointjs_graph";
@@ -112,11 +115,11 @@ const uploadjson = () => {
 
   const reader = new FileReader();
   reader.readAsText(file);
-
   reader.onload = () => {
     try {
+      cleargraph();
+
       graphData = JSON.parse(reader.result);
-      //console.log(graphData);
 
       graph.fromJSON(graphData);
       addControlsFromJSON(graphData);
@@ -128,7 +131,7 @@ const uploadjson = () => {
         }
       });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -139,19 +142,18 @@ const uploadjson = () => {
 
 function addControlsFromJSON(graphData) {
   graphData.cells.forEach((cellData) => {
-    //console.log(cellData);
+    //// console.log(cellData);
 
     const cell = graph.getCell(cellData.id);
 
-    if (cell.markup) cell.markup = cellData.markup;
-    else {
-      return;
-    }
+    // if (cell.markup) cell.markup = cellData.markup;
+    // else {
+    //   return;
+    // }
 
     if (!cell || !cell.attributes.attrs.controls) return;
 
     const controlType = cell.attributes.attrs.controls.type;
-    console.log(controlType);
 
     const cellView = cell.findView(paper);
 
@@ -196,9 +198,12 @@ window.onload = () => {
   if (localStorage.getItem("isReload") === "true") {
     localStorage.removeItem("isReload");
     const savedGraphJson = localStorage.getItem("GraphJson");
+
     if (savedGraphJson) {
       try {
         const graphData = JSON.parse(savedGraphJson);
+        // console.log(graphData);
+
         if (graphData.cells.length > 0) {
           try {
             graph.fromJSON(graphData);
@@ -208,7 +213,9 @@ window.onload = () => {
 
               append3rd(cell);
             });
-          } catch (error) {}
+          } catch (error) {
+            // console.log(error);
+          }
         }
       } catch (error) {}
     }

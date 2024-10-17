@@ -35,7 +35,9 @@ var portsIn = {
 };
 
 var portsOut = {
-  position: {},
+  position: {
+    name: "right",
+  },
   attrs: {
     portBody: {
       magnet: true,
@@ -124,6 +126,16 @@ const MAX_PRESSURE_COLOR = "#ED2637";
 const r = 30;
 const d = 10;
 const l = (3 * r) / 4;
+//pump2
+const r2 = 20;
+const d2 = 6;
+const l2 = (2 * r) / 3;
+//pump1
+const r1 = 10;
+const d1 = 4;
+const l1 = (1 * r) / 2;
+
+//panel
 const step = 16;
 const step4 = 12;
 const step3 = 10;
@@ -1054,38 +1066,6 @@ class LiquidTank extends dia.Element {
       <text @selector="location"/>
     `;
   }
-
-  // Getter and setter for level
-  get level() {
-    return this.get("level") || 0;
-  }
-
-  setlevel(level) {
-    const newLevel = Math.max(0, Math.min(100, level)); // Clamp level between 0 and 100
-    this.set("level", newLevel);
-
-    // Update liquid fill for the tank
-    const levelHeight = (newLevel / 100) * 90; // Assume full height of indicator is 90px
-    this.attr("liquid/height", levelHeight);
-    this.attr("liquid/y", 140 - levelHeight); // Adjust y to move the liquid up
-
-    // Update the waterLevel text to display the current water level in meters
-    const waterLevelMeters = (newLevel / 20).toPrecision(4); // Assume 5 meters corresponds to 100%
-
-    this.attr("waterLevel/text", `Level: ${parseFloat(waterLevelMeters)} m`);
-
-    // Update the panel if it's embedded
-    const embeddedPanel = this.getEmbeddedCells().find(
-      (cell) => cell instanceof Panel
-    );
-    if (embeddedPanel) {
-      embeddedPanel.setLevel(newLevel); // Update the panel's level
-    }
-  }
-
-  updateWaterLevel(level) {
-    this.attr("graphlevel/text", `${parseFloat(level)} cbm`);
-  }
 }
 class LiquidTank4 extends dia.Element {
   defaults() {
@@ -1301,8 +1281,8 @@ class LiquidTank3 extends dia.Element {
       ...super.defaults,
       type: "LiquidTank",
       size: {
-        width: 200,
-        height: 180,
+        width: 140,
+        height: 120,
       },
       attrs: {
         node: {
@@ -1509,8 +1489,8 @@ class LiquidTank2 extends dia.Element {
       ...super.defaults,
       type: "LiquidTank",
       size: {
-        width: 200,
-        height: 180,
+        width: 120,
+        height: 100,
       },
       attrs: {
         node: {
@@ -1717,8 +1697,8 @@ class LiquidTank1 extends dia.Element {
       ...super.defaults,
       type: "LiquidTank",
       size: {
-        width: 200,
-        height: 180,
+        width: 100,
+        height: 100,
       },
       attrs: {
         node: {
@@ -1923,6 +1903,10 @@ class BoosterPumpHouse extends dia.Element {
     return {
       ...super.defaults,
       type: "BoosterPumpHouse",
+      size: {
+        width: 200,
+        height: 180,
+      },
       attrs: {
         node: {
           size: 5,
@@ -2126,6 +2110,10 @@ class BoosterPumpHouse4 extends dia.Element {
     return {
       ...super.defaults,
       type: "BoosterPumpHouse",
+      size: {
+        width: 200,
+        height: 180,
+      },
       attrs: {
         node: {
           size: 4,
@@ -2328,6 +2316,10 @@ class BoosterPumpHouse3 extends dia.Element {
     return {
       ...super.defaults,
       type: "BoosterPumpHouse",
+      size: {
+        width: 140,
+        height: 120,
+      },
       attrs: {
         node: {
           size: 3,
@@ -2528,6 +2520,10 @@ class BoosterPumpHouse2 extends dia.Element {
     return {
       ...super.defaults,
       type: "BoosterPumpHouse",
+      size: {
+        width: 120,
+        height: 100,
+      },
       attrs: {
         node: {
           size: 2,
@@ -2724,6 +2720,10 @@ class BoosterPumpHouse1 extends dia.Element {
     return {
       ...super.defaults,
       type: "BoosterPumpHouse",
+      size: {
+        width: 100,
+        height: 100,
+      },
       attrs: {
         node: {
           size: 1,
@@ -4012,22 +4012,13 @@ class Pump2 extends dia.Element {
         root: {
           magnetSelector: "body",
         },
-        body: {
-          rx: "calc(w / 2)",
-          ry: "calc(h / 2)",
-          cx: "calc(w / 2)",
-          cy: "calc(h / 2)",
-          stroke: "gray",
-          strokeWidth: 2,
-          fill: "lightgray",
-        },
         label: {
           text: "Pump",
           textAnchor: "middle",
           textVerticalAnchor: "top",
           x: "calc(0.5*w)",
-          y: "calc(h+10)",
-          fontSize: 14,
+          y: "calc(h+5)",
+          fontSize: 10,
           fontFamily: "sans-serif",
           fill: "#350100",
         },
@@ -4037,13 +4028,13 @@ class Pump2 extends dia.Element {
           cursor: "pointer",
         },
         rotorFrame: {
-          r: 40,
+          r: 30,
           fill: "#eee",
           stroke: "#666",
-          strokeWidth: 2,
+          strokeWidth: 1.5,
         },
         rotorBackground: {
-          r: 34,
+          r: 24,
           fill: "#777",
           stroke: "#222",
           strokeWidth: 1,
@@ -4053,9 +4044,9 @@ class Pump2 extends dia.Element {
         },
         rotor: {
           // d: `M ${a} ${a} ${b} ${r} -${b} ${r} -${a} ${a} -${r} ${b} -${r} -${b} -${a} -${a} -${b} -${r} ${b} -${r} ${a} -${a} ${r} -${b} ${r} ${b} Z`,
-          d: `M 0 0 V ${r} l ${-d} ${-l} Z M 0 0 V ${-r} l ${d} ${l} Z M 0 0 H ${r} l ${-l} ${d} Z M 0 0 H ${-r} l ${l} ${-d} Z`,
+          d: `M 0 0 V ${r2} l ${-d2} ${-l2} Z M 0 0 V ${-r2} l ${d2} ${l2} Z M 0 0 H ${r2} l ${-l2} ${d2} Z M 0 0 H ${-r2} l ${l2} ${-d2} Z`,
           stroke: "#222",
-          strokeWidth: 3,
+          strokeWidth: 2,
           fill: "#bbb",
         },
         controls: {
@@ -4078,7 +4069,7 @@ class Pump2 extends dia.Element {
               <rect @selector="pipeBody" />
               <rect @selector="pipeEnd" />
             `,
-            size: { width: 80, height: 30 },
+            size: { width: 50, height: 20 },
             attrs: {
               portRoot: {
                 magnetSelector: "pipeEnd",
@@ -4105,7 +4096,7 @@ class Pump2 extends dia.Element {
                 },
               },
               pipeEnd: {
-                width: 10,
+                width: 8,
                 refCx: "50%", // Center horizontally
                 refCy: "50%", // Center vertically
                 height: "calc(h+6)",
@@ -4130,7 +4121,7 @@ class Pump2 extends dia.Element {
               <rect @selector="pipeBody" />
               <rect @selector="pipeEnd" />
             `,
-            size: { width: 80, height: 30 },
+            size: { width: 50, height: 20 },
             attrs: {
               portRoot: {
                 magnetSelector: "pipeEnd",
@@ -4139,7 +4130,7 @@ class Pump2 extends dia.Element {
               pipeBody: {
                 width: "calc(w)",
                 height: "calc(h)",
-                y: -42,
+                y: -28,
                 fill: {
                   type: "linearGradient",
                   stops: [
@@ -4157,9 +4148,9 @@ class Pump2 extends dia.Element {
                 },
               },
               pipeEnd: {
-                width: 10,
+                width: 8,
                 height: "calc(h+6)",
-                y: -45,
+                y: -30,
                 stroke: "gray",
                 strokeWidth: 3,
                 fill: "white",
@@ -4199,7 +4190,7 @@ class Pump2 extends dia.Element {
                 fill: "#383838",
               },
               pipeEnd: {
-                x: "calc(w - 10)",
+                x: "calc(w - 8)",
               },
             },
           },
@@ -4234,8 +4225,8 @@ class Pump1 extends dia.Element {
       ...super.defaults,
       type: "Pump",
       size: {
-        width: 50,
-        height: 50,
+        width: -10,
+        height: -10,
       },
       power: 0,
       attrs: {
@@ -4255,16 +4246,16 @@ class Pump1 extends dia.Element {
           cx: "calc(w / 2)",
           cy: "calc(h / 2)",
           stroke: "gray",
-          strokeWidth: 2,
+          strokeWidth: 1,
           fill: "lightgray",
         },
         label: {
           text: "Pump",
           textAnchor: "middle",
           textVerticalAnchor: "top",
-          x: "calc(0.5*w)",
-          y: "calc(h+10)",
-          fontSize: 14,
+          x: "calc(0.8*w)",
+          y: "calc(h+25)",
+          fontSize: 8,
           fontFamily: "sans-serif",
           fill: "#350100",
         },
@@ -4274,13 +4265,13 @@ class Pump1 extends dia.Element {
           cursor: "pointer",
         },
         rotorFrame: {
-          r: 40,
+          r: 15,
           fill: "#eee",
           stroke: "#666",
-          strokeWidth: 2,
+          strokeWidth: 1,
         },
         rotorBackground: {
-          r: 34,
+          r: 12,
           fill: "#777",
           stroke: "#222",
           strokeWidth: 1,
@@ -4290,9 +4281,9 @@ class Pump1 extends dia.Element {
         },
         rotor: {
           // d: `M ${a} ${a} ${b} ${r} -${b} ${r} -${a} ${a} -${r} ${b} -${r} -${b} -${a} -${a} -${b} -${r} ${b} -${r} ${a} -${a} ${r} -${b} ${r} ${b} Z`,
-          d: `M 0 0 V ${r} l ${-d} ${-l} Z M 0 0 V ${-r} l ${d} ${l} Z M 0 0 H ${r} l ${-l} ${d} Z M 0 0 H ${-r} l ${l} ${-d} Z`,
+          d: `M 0 0 V ${r1} l ${-d1} ${-l1} Z M 0 0 V ${-r1} l ${d1} ${l1} Z M 0 0 H ${r1} l ${-l1} ${d1} Z M 0 0 H ${-r1} l ${l1} ${-d1} Z`,
           stroke: "#222",
-          strokeWidth: 3,
+          strokeWidth: 0.5,
           fill: "#bbb",
         },
         controls: {
@@ -4315,7 +4306,7 @@ class Pump1 extends dia.Element {
               <rect @selector="pipeBody" />
               <rect @selector="pipeEnd" />
             `,
-            size: { width: 80, height: 30 },
+            size: { width: 30, height: 10 },
             attrs: {
               portRoot: {
                 magnetSelector: "pipeEnd",
@@ -4324,7 +4315,7 @@ class Pump1 extends dia.Element {
               pipeBody: {
                 width: "calc(w)",
                 height: "calc(h)",
-                y: 8,
+                y: 5,
                 fill: {
                   type: "linearGradient",
                   stops: [
@@ -4342,13 +4333,13 @@ class Pump1 extends dia.Element {
                 },
               },
               pipeEnd: {
-                width: 10,
+                width: 6,
                 refCx: "50%", // Center horizontally
                 refCy: "50%", // Center vertically
                 height: "calc(h+6)",
-                y: 5,
+                y: 2,
                 stroke: "gray",
-                strokeWidth: 3,
+                strokeWidth: 1,
                 fill: "white",
                 magnet: true,
               },
@@ -4367,7 +4358,7 @@ class Pump1 extends dia.Element {
               <rect @selector="pipeBody" />
               <rect @selector="pipeEnd" />
             `,
-            size: { width: 80, height: 30 },
+            size: { width: 30, height: 10 },
             attrs: {
               portRoot: {
                 magnetSelector: "pipeEnd",
@@ -4376,7 +4367,7 @@ class Pump1 extends dia.Element {
               pipeBody: {
                 width: "calc(w)",
                 height: "calc(h)",
-                y: -42,
+                y: -13,
                 fill: {
                   type: "linearGradient",
                   stops: [
@@ -4394,11 +4385,11 @@ class Pump1 extends dia.Element {
                 },
               },
               pipeEnd: {
-                width: 10,
+                width: 6,
                 height: "calc(h+6)",
-                y: -45,
+                y: -16,
                 stroke: "gray",
-                strokeWidth: 3,
+                strokeWidth: 1,
                 fill: "white",
                 magnet: true,
               },
@@ -4414,10 +4405,6 @@ class Pump1 extends dia.Element {
             id: "in",
             z: 1,
             attrs: {
-              label: {
-                text: "in",
-                fill: "#383838",
-              },
               pipeBody: {
                 x: "calc(-1 * w)",
               },
@@ -4431,12 +4418,8 @@ class Pump1 extends dia.Element {
             id: "out",
             z: 0,
             attrs: {
-              label: {
-                text: "out",
-                fill: "#383838",
-              },
               pipeEnd: {
-                x: "calc(w - 10)",
+                x: "calc(w - 5)",
               },
             },
           },

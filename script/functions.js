@@ -359,6 +359,7 @@ const append3rd = (cell) => {
   if (element.type === "HandValve" || element.type === "ControlValve") {
     $(`#rotate-${element.id}`).on("click", function () {
       cell = graph.getCell(element.id);
+      // console.log(cell);
       cell.rotate(90);
     });
   }
@@ -678,8 +679,6 @@ function saveNodeSize(cellId) {
   const elements = graph.getCells();
   elements.forEach((element) => {
     if (element.attributes.type === "Pipe") {
-      // console.log(element);
-
       if (element.attributes.source.id === cellId) {
         let portId = element.attributes.source.port,
           magnet = element.attributes.source.magnet;
@@ -702,7 +701,7 @@ function saveNodeSize(cellId) {
   });
 
   if (newElement) {
-    cell.remove({ disconnectLinks: false });
+    cell.remove();
     if (newSize === 1) {
       setLevel(newElement, (newWaterLevel / 5) * 100, 30, 32);
     } else if (newSize === 2) {
@@ -721,6 +720,8 @@ function saveNodeSize(cellId) {
     }
     $("#paper2li").find(`#${cellId}`).remove();
     append3rd(newElement);
+
+    focusElement(cellView);
   }
 }
 
@@ -730,10 +731,14 @@ function saveNodeSizeNT(cellId) {
 
   const cell = graph.getCell(cellId);
 
+  //let angle;
+  //if (cell.get("angle")) angle = cell.get("angle");
+
   previous = {
     label: cell.attributes.attrs.label.text,
     positionX: cell.attributes.position.x,
     positionY: cell.attributes.position.y,
+    angle: cell.attributes.angle,
   };
   if (cell.attributes.type === "FlowMeter" || cell.type === "FlowMeter") {
     previous = {
@@ -767,13 +772,14 @@ function saveNodeSizeNT(cellId) {
     newElement.attributes.attrs.label.text = previous.label;
     newElement.attributes.position.x = previous.positionX;
     newElement.attributes.position.y = previous.positionY;
+    newElement.attributes.angle = previous.angle;
   }
 
   graph.addCell(newElement);
   const elements = graph.getCells();
   elements.forEach((element) => {
     if (element.attributes.type === "Pipe") {
-      // console.log(element);
+      // // console.log(element);
 
       if (element.attributes.source.id === cellId) {
         let portId = element.attributes.source.port,
@@ -804,6 +810,7 @@ function saveNodeSizeNT(cellId) {
     }
     $("#paper2li").find(`#${cellId}`).remove();
     append3rd(newElement);
+    focusElement(cellView);
   }
 }
 

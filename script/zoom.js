@@ -5,7 +5,7 @@ paper.on("blank:mousewheel", async function (evt, x, y, delta) {
   evt.preventDefault();
   count += delta;
   if (count >= -13 && count <= 6) {
-    scaleContent(Scale + delta * 0.1);
+    scaleContent(Scale + delta * 0.11);
     scaleminimap(Scale);
   } else if (count < -13) count = -13;
   else if (count > 6) count = 6;

@@ -1,6 +1,8 @@
 //------------------------------------Selecting element on paper-----------------------------------
 var previousCellView = null;
-paper.on("element:pointerdown", function (elementView, evt, x, y) {
+paper.on("element:pointerdown", focusElement);
+
+function focusElement(elementView) {
   elementvisible(elementView.model.id);
 
   if (elementView.model.attributes.type !== "Panel") {
@@ -9,14 +11,14 @@ paper.on("element:pointerdown", function (elementView, evt, x, y) {
 
     if (elementView !== previousCellView && previousCellView != null) {
       graphsteps.push(JSON.stringify(graph.toJSON()));
-      //console.log(graphsteps.length);
+      //// console.log(graphsteps.length);
       graph_undo_redo = [];
       previousCellView.unhighlight();
     }
     previousCellView = elementView;
     $("#container").css("overflow", "hidden");
   }
-});
+}
 
 paper.on("blank:pointerdown", function (evt, x, y) {
   if (previousCellView != null) {
@@ -31,7 +33,7 @@ let dimenMeters;
 let currentElement;
 // paper.on("element:pointerdblclick", function (elementView) {
 //   ///resetAll(this);
-//   console.log(elementView.model.attributes.id);
+//   // console.log(elementView.model.attributes.id);
 //   currentElement = elementView.model;
 //   var name = elementView.model.attributes.attrs.text;
 
@@ -46,7 +48,7 @@ function SaveDimensionModal(e) {
   dimenMeters = document.getElementById("Dimensioninput").value;
   document.getElementById("Dimensioninput").value = "";
   $("#DimensionModal").modal("hide");
-  //console.log($(`#` + currentElement.attributes.id + `text`)[0].innerHTML);
+  //// console.log($(`#` + currentElement.attributes.id + `text`)[0].innerHTML);
   $(`#` + currentElement.attributes.id + `text`)[0].innerHTML = dimenMeters;
   currentElement.attr("text/text", dimenMeters);
 }
