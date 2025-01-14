@@ -5708,6 +5708,7 @@ class Zone extends dia.Element {
           stroke: "#cad8e3",
           strokeWidth: 1,
           d: "M 0 calc(0.5*h) calc(0.5*h) 0 H calc(w) V calc(h) H calc(0.5*h) Z",
+          transform: "rotate(180, calc(w / 2), calc(h / 2))",
         },
         label: {
           text: "Zone",
@@ -5717,8 +5718,8 @@ class Zone extends dia.Element {
           fill: LIQUID_COLOR,
           textVerticalAnchor: "middle",
           textAnchor: "middle",
-          x: "calc(w / 2 + 10)",
-          y: "calc(h / 2)",
+          x: "calc(w / 2)",
+          y: "calc(h+15)",
         },
         panel: {
           text: "Zone",
@@ -5730,7 +5731,7 @@ class Zone extends dia.Element {
           out: {
             ...portsOut,
             position: {
-              name: "left",
+              name: "right",
             },
           },
         },
@@ -5752,7 +5753,6 @@ class Zone extends dia.Element {
       },
     };
   }
-
   preinitialize() {
     this.markup = util.svg/* xml */ `
             <path @selector="body"/>

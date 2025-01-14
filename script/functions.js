@@ -38,7 +38,11 @@ const append3rd = (cell) => {
       </div>
     </li>`;
 
-  if (element.type === "HandValve" || element.type === "ControlValve") {
+  if (
+    element.type === "HandValve" ||
+    element.type === "ControlValve" ||
+    element.type === "Zone"
+  ) {
     listItem += `
         <button id="rotate-${element.id}" class="rotate-btn UL">Rotate 90°</button>
       `;
@@ -356,10 +360,14 @@ const append3rd = (cell) => {
   }
 
   // Attach event listeners for rotation
-  if (element.type === "HandValve" || element.type === "ControlValve") {
+  if (
+    element.type === "HandValve" ||
+    element.type === "ControlValve" ||
+    element.type === "Zone"
+  ) {
     $(`#rotate-${element.id}`).on("click", function () {
       cell = graph.getCell(element.id);
-      // console.log(cell);
+      console.log(cell);
       cell.rotate(90);
     });
   }
